@@ -1,0 +1,8 @@
+# Firebase real config 
+firebase-config.js
+
+# Mac junk
+.DS_Store
+
+# VS Code
+.vscode/
