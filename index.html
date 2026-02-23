@@ -565,7 +565,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     /* ─── CONSTANTS ─── */
@@ -719,8 +719,18 @@
     };
 
     window.signInWithGoogle = async () => {
-        try { await signInWithRedirect(auth, provider); }
-        catch(e) { showToast("Sign in failed: " + e.message); }
+        try {
+            // Try popup first (works on most browsers)
+            await signInWithPopup(auth, provider);
+        } catch(e) {
+            if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+                // Fallback to redirect if popup blocked
+                try { await signInWithRedirect(auth, provider); }
+                catch(e2) { showToast("Sign in failed: " + e2.message); }
+            } else {
+                showToast("Sign in failed: " + e.message);
+            }
+        }
     };
 
     window.showLogoutModal  = () => { document.getElementById('logout-modal').style.display = 'flex'; };
@@ -877,8 +887,7 @@
                     lastAudioURL = null;
                     document.getElementById('playback-row').style.display = 'none';
                     document.getElementById('record-hint').innerHTML =
-                        '<span style="color:var(--red);font-weight:600">Didn\'t catch that clearly — say it again! 🎙</span>'
-                        ;
+                        '<span style="color:var(--red);font-weight:600">Didn\'t catch that clearly — say it again! 🎙</span>';
                     return;
                 }
 
