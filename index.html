@@ -31,8 +31,10 @@
   .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:var(--red);color:var(--cream);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s,transform 0.1s;font-family:'DM Sans',sans-serif;}
   .google-btn:hover{background:var(--red-light);}
   .google-btn:active{transform:scale(0.98);}
+
+  /* ── WELCOME ── */
   #welcome-screen{display:none;padding-top:24px;}
-  .welcome-banner{background:var(--red);border-radius:20px;padding:28px;color:var(--cream);margin-bottom:20px;}
+  .welcome-banner{background:var(--red);border-radius:20px;padding:28px;color:var(--cream);margin-bottom:16px;}
   .welcome-banner .greeting{font-size:13px;opacity:0.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
   .welcome-banner .speaker-name{font-size:26px;font-weight:600;margin-bottom:12px;}
   .welcome-banner .instructions{font-size:13px;line-height:1.7;opacity:0.85;}
@@ -40,7 +42,17 @@
   .resume-banner .resume-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
   .resume-banner .resume-text{font-size:13px;color:var(--ink-soft);margin-bottom:12px;}
   .resume-banner .resume-text strong{color:var(--ink);}
-  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+
+  /* ── INSTRUCTIONS CARD ── */
+  .instructions-card{background:var(--white);border-radius:20px;padding:20px 20px 16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .instructions-card .card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:14px;font-family:'DM Mono',monospace;}
+  .tip-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .tip-row:last-child{margin-bottom:0;}
+  .tip-icon{font-size:18px;min-width:26px;text-align:center;margin-top:1px;}
+  .tip-text{font-size:13px;color:var(--ink-soft);line-height:1.6;}
+  .tip-text strong{color:var(--ink);}
+
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
   .info-box{background:var(--white);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
   .info-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:4px;}
   .info-box .value{font-size:22px;font-weight:700;color:var(--red);font-family:'DM Mono',monospace;}
@@ -48,6 +60,8 @@
   .start-btn{width:100%;padding:16px;background:var(--red);color:var(--cream);border:none;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,transform 0.1s;letter-spacing:0.5px;}
   .start-btn:hover{background:var(--red-light);}
   .start-btn:active{transform:scale(0.98);}
+
+  /* ── RECORDER ── */
   #recorder-screen{display:none;padding-top:24px;}
   .recorder-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
   .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink-soft);font-family:'DM Sans',sans-serif;padding:4px 0;transition:color 0.2s;}
@@ -84,6 +98,8 @@
   .upload-indicator.show{display:flex;}
   .spinner{width:14px;height:14px;border:2px solid var(--cream-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ── DONE ── */
   #done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 72px);text-align:center;gap:20px;}
   .done-icon{width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 4px 20px rgba(45,106,79,0.3);}
   .done-title{font-family:'Tiro Devanagari Nepali',serif;font-size:32px;color:var(--red);}
@@ -143,15 +159,52 @@
       <div class="greeting">स्वागत छ / Welcome</div>
       <div class="speaker-name" id="welcome-name">—</div>
       <div class="instructions">
-        १२ शब्दहरू रेकर्ड गर्नुहोस्, प्रत्येक १० पटक। स्पष्ट र प्राकृतिक बोल्नुहोस्।<br/>
-        Record 12 keywords, 10 times each. Speak clearly.
+        तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
+        Your voice helps build Nepali AI. Thank you for contributing!
       </div>
     </div>
+
+    <!-- Resume banner -->
     <div class="resume-banner" id="resume-banner">
       <div class="resume-title">▶ Resume</div>
       <div class="resume-text" id="resume-text">—</div>
       <button class="small-btn gold" onclick="resumeRecording()">Continue →</button>
     </div>
+
+    <!-- Instructions card -->
+    <div class="instructions-card">
+      <div class="card-title">📋 How it works</div>
+
+      <div class="tip-row">
+        <div class="tip-icon">🏠</div>
+        <div class="tip-text"><strong>Find a quiet spot.</strong> A room with no background noise or music is best. Don't record near a fan or open window.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">🎙️</div>
+        <div class="tip-text"><strong>Hold your phone normally</strong> — about 15–20 cm from your mouth. Don't cover the mic or hold it too close.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">🗣️</div>
+        <div class="tip-text"><strong>Speak clearly and naturally.</strong> Say each word the way you'd normally say it in conversation — not too slow, not robotic. Vary your pace slightly across attempts: some normal speed, some a bit faster. This makes the dataset stronger.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">⏱️</div>
+        <div class="tip-text"><strong>Wait 1 second</strong> before and after speaking. Press record → pause → say the word → pause → stop. This prevents cut-off audio.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">🔇</div>
+        <div class="tip-text"><strong>Don't shout.</strong> Normal talking volume is perfect. Shouting distorts the audio and makes it unusable.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">☕</div>
+        <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves after every clip. Just hit ← Back and come back later — you'll resume exactly where you left off.</div>
+      </div>
+      <div class="tip-row">
+        <div class="tip-icon">🔁</div>
+        <div class="tip-text"><strong>Not happy with a recording?</strong> Hit ↺ to retake before saving. Once you press ✓ it's saved to the dataset.</div>
+      </div>
+    </div>
+
     <div class="info-grid">
       <div class="info-box"><div class="label">Words</div><div class="value">12</div><div class="value-sub">Nepali</div></div>
       <div class="info-box"><div class="label">Repeat</div><div class="value">10×</div><div class="value-sub">per word</div></div>
@@ -251,7 +304,6 @@
   let CLOUDINARY_PRESET = '';
   let db, auth, provider;
 
-  // ── Fetch config from Netlify function (keys never exposed in code) ──
   async function init() {
     try {
       const res = await fetch('/.netlify/functions/config');
@@ -262,9 +314,12 @@
       auth     = getAuth(app);
       provider = new GoogleAuthProvider();
       db       = getFirestore(app);
+
       onAuthStateChanged(auth, async user => {
         if (user) {
           currentUser = user;
+          // ── Save user info to Firestore ──
+          await saveUserProfile(user);
           showScreen('welcome');
           document.getElementById('welcome-name').textContent =
             user.displayName || user.email;
@@ -290,6 +345,31 @@
   }
 
   init();
+
+  // ── Save user profile to Firestore (free, no card needed) ──
+  async function saveUserProfile(user) {
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const snap    = await getDoc(userRef);
+      const now     = new Date();
+      if (!snap.exists()) {
+        // First time — create profile
+        await setDoc(userRef, {
+          uid:        user.uid,
+          name:       user.displayName || '',
+          email:      user.email || '',
+          photo:      user.photoURL || '',
+          joinedAt:   now,
+          lastSeen:   now,
+        });
+      } else {
+        // Returning user — just update lastSeen
+        await setDoc(userRef, { lastSeen: now }, { merge: true });
+      }
+    } catch(e) {
+      console.error("Profile save failed:", e.message);
+    }
+  }
 
   function resetProgress() {
     currentWord = 0; currentAttempt = 0; uploadedCount = 0;
@@ -488,6 +568,11 @@
       await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
         currentWord: 0, currentAttempt: 0, uploadedCount: 0, timestamp: new Date()
       });
+      // Mark as completed in user profile
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        completedAt: new Date(),
+        totalClips: uploadedCount
+      }, { merge: true });
     }
     showScreen('done');
     document.getElementById('done-stats').innerHTML = `
