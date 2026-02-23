@@ -687,12 +687,22 @@
     }
 
     if (isInAppBrowser()) {
-        document.getElementById('iab-url-display').textContent = window.location.href;
-        // Show IAB warning immediately, don't even try Firebase
-        document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
-        const iab = document.getElementById('iab-screen');
-        iab.style.display = '';
-        iab.classList.add('active');
+        const url = window.location.href;
+        const ua = navigator.userAgent || '';
+
+        if (/android/i.test(ua)) {
+            // Android: fire intent immediately — triggers Messenger's native "You're leaving our app" popup
+            // If Chrome not installed falls back to any browser
+            window.location.href = url.replace(/^https:\/\//, 'intent://') +
+                '#Intent;scheme=https;action=android.intent.action.VIEW;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+        } else {
+            // iOS: show our screen (iOS blocks auto-redirect from IAB)
+            document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
+            const iab = document.getElementById('iab-screen');
+            iab.style.display = '';
+            iab.classList.add('active');
+            document.getElementById('iab-url-display').textContent = url;
+        }
     }
 
     window.openInBrowser = () => {
