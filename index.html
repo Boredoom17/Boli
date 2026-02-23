@@ -921,9 +921,8 @@
 </div>
 
 <script type="module">
-    // Your original script (unchanged)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const keywords = [
@@ -966,6 +965,17 @@
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
             db = getFirestore(app);
+
+            // Handle redirect result after sign-in
+            getRedirectResult(auth)
+                .then((result) => {
+                    if (result) {
+                        // User signed in successfully — no need to do anything extra, onAuthStateChanged will handle
+                    }
+                })
+                .catch((error) => {
+                    showToast("Sign in error: " + error.message);
+                });
 
             onAuthStateChanged(auth, async user => {
                 if (user) {
@@ -1074,8 +1084,11 @@
     };
 
     window.signInWithGoogle = async () => {
-        try { await signInWithPopup(auth, provider); }
-        catch(e) { showToast("Sign in failed: " + e.message); }
+        try {
+            await signInWithRedirect(auth, provider);
+        } catch(e) {
+            showToast("Sign in failed: " + e.message);
+        }
     };
 
     window.showLogoutModal = () => { document.getElementById('logout-modal').style.display = 'flex'; };
@@ -1164,10 +1177,13 @@
     }
 
     window.playBack = () => {
-        if (!lastAudioURL) return;
+        if (!lastAudioURL) {
+            showToast("No recording to play");
+            return;
+        }
         if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
         currentAudio = new Audio(lastAudioURL);
-        currentAudio.play();
+        currentAudio.play().catch(e => showToast("Playback failed: " + e.message));
         currentAudio.onended = () => { currentAudio = null; };
     };
 
