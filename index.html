@@ -396,6 +396,24 @@
         .modal-cancel { background: var(--cream-dark); color: var(--ink); }
         .modal-logout { background: var(--red); color: var(--cream); }
         .modal-btn:hover { opacity: 0.9; }
+
+        /* ── MIC DENIED MODAL ── */
+        .mic-denied-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+            align-items: flex-end; justify-content: center;
+        }
+        .mic-denied-overlay.show { display: flex; }
+        .mic-denied-card {
+            background: var(--white); border-radius: 24px 24px 0 0;
+            padding: 28px 24px 48px; width: 100%; max-width: 480px;
+        }
+        .mic-denied-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .mic-denied-card .sub { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 20px; }
+        .mic-step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+        .mic-step-num { min-width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+        .mic-step strong { color: var(--ink); }
+        .mic-denied-btn { width: 100%; padding: 14px; background: var(--red); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: "DM Sans", sans-serif; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -577,6 +595,31 @@
         <button class="done-ok-btn" onclick="handleDoneOK()">OK</button>
     </div>
 
+    <!-- MIC DENIED MODAL -->
+    <div class="mic-denied-overlay" id="mic-denied-modal">
+        <div class="mic-denied-card">
+            <h2>🎙️ Microphone access needed</h2>
+            <p class="sub">Your browser has blocked the microphone for this site. Here's how to fix it:</p>
+            <div class="mic-step">
+                <div class="mic-step-num">1</div>
+                <div>Tap the <strong>🔒 lock icon</strong> in your browser's address bar</div>
+            </div>
+            <div class="mic-step">
+                <div class="mic-step-num">2</div>
+                <div>Tap <strong>Permissions</strong> or <strong>Site settings</strong></div>
+            </div>
+            <div class="mic-step">
+                <div class="mic-step-num">3</div>
+                <div>Find <strong>Microphone</strong> and set it to <strong>Allow</strong></div>
+            </div>
+            <div class="mic-step">
+                <div class="mic-step-num">4</div>
+                <div>Come back and <strong>refresh the page</strong></div>
+            </div>
+            <button class="mic-denied-btn" onclick="document.getElementById('mic-denied-modal').classList.remove('show')">Got it</button>
+        </div>
+    </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -657,6 +700,10 @@
                     await loadProgress(user);
                     showScreen('welcome');
                     document.getElementById('welcome-name').textContent = user.displayName || user.email;
+                    // Request mic permission immediately on login so browser prompts user right away
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                        .then(stream => { stream.getTracks().forEach(t => t.stop()); }) // got it, stop immediately
+                        .catch(() => {}); // silently ignore — we'll handle denial when they record
                 } else {
                     currentUser = null;
                     wordProgress = {};
@@ -889,11 +936,20 @@
     }
 
     /* ─── OPEN RECORDER FOR A WORD ─── */
-    window.openRecorder = (wordIdx) => {
+    window.openRecorder = async (wordIdx) => {
         activeWordIdx  = wordIdx;
         currentAttempt = Math.min(wordProgress[keywords[wordIdx].romanized] || 0, MAX_ATTEMPTS);
         resetRecorderUI();
         showScreen('recorder');
+        // Proactively check mic permission
+        if (navigator.permissions) {
+            try {
+                const status = await navigator.permissions.query({ name: 'microphone' });
+                if (status.state === 'denied') {
+                    document.getElementById('mic-denied-modal').classList.add('show');
+                }
+            } catch(e) { /* permissions API not supported, ignore */ }
+        }
     };
 
     function resetRecorderUI() {
@@ -1007,7 +1063,7 @@
             document.getElementById('record-hint').textContent = 'रेकर्ड भइरहेको छ…';
         } catch(e) {
             if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-                showToast('Mic blocked — tap the lock icon in your browser and allow microphone');
+                document.getElementById('mic-denied-modal').classList.add('show');
             } else if (e.name === 'NotFoundError') {
                 showToast('No microphone found on this device');
             } else {
