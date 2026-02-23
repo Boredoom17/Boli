@@ -962,7 +962,17 @@
         if (currentAttempt >= MAX_ATTEMPTS) { showToast("This word is complete!"); return; }
         try {
             if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // More permissive audio constraints for mobile browsers
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    sampleRate: 44100
+                }
+            }).catch(async () => {
+                // Fallback: try with minimal constraints if above fails
+                return await navigator.mediaDevices.getUserMedia({ audio: true });
+            });
             audioChunks  = [];
             mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
@@ -979,7 +989,8 @@
                     lastAudioURL = null;
                     document.getElementById('playback-row').style.display = 'none';
                     document.getElementById('record-hint').innerHTML =
-                        '<span style="color:var(--red);font-weight:600">Didn\'t catch that clearly &#8212; say it again!</span>';
+                        '<span style="color:var(--red);font-weight:600"</span>';
+                          '<span style="color:var(--red);font-weight:600">Didn&#39;t catch that clearly &#8212; say it again!</span>';
                     return;
                 }
 
