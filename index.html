@@ -4,120 +4,383 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Boli — बोली</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
 <style>
-  :root {
-    --red:#8B1A1A;--red-light:#B22222;--cream:#F5EFE0;--cream-dark:#EDE4D0;
-    --ink:#1C1008;--ink-soft:#4A3728;--gold:#C9922A;--green:#2D6A4F;--white:#FDFAF4;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;}
-  header{width:100%;background:var(--red);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
-  .logo{display:flex;flex-direction:column;line-height:1;}
-  .logo-main{font-family:'Tiro Devanagari Nepali',serif;font-size:26px;font-weight:500;color:var(--cream);letter-spacing:2px;}
-  .logo-sub{font-size:10px;color:rgba(245,239,224,0.65);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;font-family:'DM Mono',monospace;}
-  .user-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:99px;padding:6px 12px 6px 6px;cursor:pointer;transition:background 0.2s;}
-  .user-pill:hover{background:rgba(255,255,255,0.2);}
-  .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--white);overflow:hidden;}
-  .user-avatar img{width:100%;height:100%;object-fit:cover;}
-  .user-name{font-size:13px;color:var(--cream);font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  main{width:100%;max-width:480px;padding:0 16px 48px;flex:1;display:flex;flex-direction:column;margin:0 auto;}
-  #login-screen{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px;}
-  .nepali-title{font-family:'Tiro Devanagari Nepali',serif;font-size:64px;color:var(--red);margin-bottom:2px;line-height:1.1;}
-  .eng-title{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:16px;}
-  .login-card{background:var(--white);border-radius:20px;padding:32px 28px;box-shadow:0 4px 32px rgba(0,0,0,0.08);width:100%;max-width:100%;}
-  .login-card h2{font-size:18px;font-weight:600;margin-bottom:6px;}
-  .login-card p{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;}
-  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:var(--red);color:var(--cream);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s,transform 0.1s;font-family:'DM Sans',sans-serif;}
-  .google-btn:hover{background:var(--red-light);}
-  .google-btn:active{transform:scale(0.98);}
 
-  /* ── WELCOME ── */
-  #welcome-screen{display:none;padding-top:24px;}
-  .welcome-banner{background:var(--red);border-radius:20px;padding:28px;color:var(--cream);margin-bottom:16px;}
-  .welcome-banner .greeting{font-size:13px;opacity:0.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
-  .welcome-banner .speaker-name{font-size:26px;font-weight:600;margin-bottom:12px;}
-  .welcome-banner .instructions{font-size:13px;line-height:1.7;opacity:0.85;}
-  .resume-banner{display:none;background:var(--white);border-left:4px solid var(--gold);border-radius:14px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-  .resume-banner .resume-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
-  .resume-banner .resume-text{font-size:13px;color:var(--ink-soft);margin-bottom:12px;}
-  .resume-banner .resume-text strong{color:var(--ink);}
+/* ===================================================
+   ROOT
+=================================================== */
 
-  /* ── INSTRUCTIONS CARD ── */
-  .instructions-card{background:var(--white);border-radius:20px;padding:20px 20px 16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
-  .instructions-card .card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:14px;font-family:'DM Mono',monospace;}
-  .tip-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-  .tip-row:last-child{margin-bottom:0;}
-  .tip-icon{font-size:18px;min-width:26px;text-align:center;margin-top:1px;}
-  .tip-text{font-size:13px;color:var(--ink-soft);line-height:1.6;}
-  .tip-text strong{color:var(--ink);}
+:root{
+  --red:#8B1A1A;
+  --red-light:#B22222;
+  --cream:#F5EFE0;
+  --cream-dark:#EDE4D0;
+  --ink:#1C1008;
+  --ink-soft:#4A3728;
+  --gold:#C9922A;
+  --green:#2D6A4F;
+  --white:#FDFAF4;
+}
 
-  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-  .info-box{background:var(--white);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-  .info-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:4px;}
-  .info-box .value{font-size:22px;font-weight:700;color:var(--red);font-family:'DM Mono',monospace;}
-  .info-box .value-sub{font-size:11px;color:var(--ink-soft);margin-top:2px;}
-  .start-btn{width:100%;padding:16px;background:var(--red);color:var(--cream);border:none;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,transform 0.1s;letter-spacing:0.5px;}
-  .start-btn:hover{background:var(--red-light);}
-  .start-btn:active{transform:scale(0.98);}
+/* ===================================================
+   RESET
+=================================================== */
 
-  /* ── RECORDER ── */
-  #recorder-screen{display:none;padding-top:24px;}
-  .recorder-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-  .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink-soft);font-family:'DM Sans',sans-serif;padding:4px 0;transition:color 0.2s;}
-  .back-btn:hover{color:var(--red);}
-  .progress-bar-wrap{background:var(--cream-dark);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;}
-  .progress-bar-fill{height:100%;background:var(--red);border-radius:99px;transition:width 0.4s ease;}
-  .progress-label{font-size:11px;color:var(--ink-soft);letter-spacing:0.5px;text-align:right;margin-bottom:8px;}
-  .word-card{background:var(--white);border-radius:24px;padding:36px 28px 28px;box-shadow:0 4px 24px rgba(0,0,0,0.07);text-align:center;margin-bottom:20px;}
-  .word-number{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--ink-soft);margin-bottom:12px;font-family:'DM Mono',monospace;}
-  .word-nepali{font-family:'Tiro Devanagari Nepali',serif;font-size:52px;color:var(--red);line-height:1.1;margin-bottom:8px;}
-  .word-romanized{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);margin-bottom:4px;letter-spacing:1px;}
-  .word-meaning{font-size:13px;color:var(--ink-soft);margin-bottom:24px;}
-  .attempts-row{display:flex;justify-content:center;gap:8px;margin-bottom:8px;}
-  .attempt-dot{width:10px;height:10px;border-radius:50%;background:var(--cream-dark);transition:background 0.3s;}
-  .attempt-dot.done{background:var(--green);}
-  .attempt-dot.active{background:var(--gold);transform:scale(1.3);}
-  .attempts-label{font-size:11px;color:var(--ink-soft);letter-spacing:0.5px;}
-  .controls{display:flex;flex-direction:column;align-items:center;gap:16px;}
-  .record-btn{width:80px;height:80px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:32px;transition:transform 0.15s,box-shadow 0.2s;}
-  .record-btn.idle{background:var(--red);box-shadow:0 4px 20px rgba(139,26,26,0.35);}
-  .record-btn.recording{background:#c0392b;animation:pulse-ring 1.2s ease-out infinite;}
-  .record-btn:active{transform:scale(0.93);}
-  @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(192,57,43,0.5);}70%{box-shadow:0 0 0 20px rgba(192,57,43,0);}100%{box-shadow:0 0 0 0 rgba(192,57,43,0);}}
-  .record-hint{font-size:12px;color:var(--ink-soft);text-align:center;min-height:18px;}
-  .playback-row{display:flex;gap:10px;align-items:center;}
-  .small-btn{padding:9px 18px;border-radius:99px;border:2px solid var(--cream-dark);background:var(--white);font-size:13px;font-weight:500;cursor:pointer;color:var(--ink);font-family:'DM Sans',sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
-  .small-btn:hover{border-color:var(--red);color:var(--red);}
-  .small-btn.primary{background:var(--green);border-color:var(--green);color:white;}
-  .small-btn.primary:hover{background:#235c43;border-color:#235c43;}
-  .small-btn.gold{background:var(--gold);border-color:var(--gold);color:white;}
-  .small-btn.gold:hover{background:#b07d1e;border-color:#b07d1e;}
-  .small-btn:disabled{opacity:0.4;cursor:not-allowed;}
-  .upload-indicator{display:none;align-items:center;gap:8px;font-size:12px;color:var(--gold);}
-  .upload-indicator.show{display:flex;}
-  .spinner{width:14px;height:14px;border:2px solid var(--cream-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-  /* ── DONE ── */
-  #done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 72px);text-align:center;gap:20px;}
-  .done-icon{width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 4px 20px rgba(45,106,79,0.3);}
-  .done-title{font-family:'Tiro Devanagari Nepali',serif;font-size:32px;color:var(--red);}
-  .done-sub{font-size:14px;color:var(--ink-soft);line-height:1.7;max-width:300px;}
-  .done-stats{background:var(--white);border-radius:16px;padding:20px 28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);width:100%;max-width:300px;}
-  .done-stats .stat-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--cream-dark);}
-  .done-stats .stat-row:last-child{border-bottom:none;}
-  .done-stats .stat-val{font-weight:600;color:var(--green);font-family:'DM Mono',monospace;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:10px 20px;border-radius:99px;font-size:13px;transition:transform 0.3s ease;z-index:999;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-  #logout-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;}
-  .modal-content{background:var(--white);border-radius:16px;padding:20px;text-align:center;max-width:300px;width:80%;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
-  .modal-content p{font-size:15px;margin-bottom:16px;}
-  .modal-btns{display:flex;gap:12px;justify-content:center;}
-  .modal-btn{padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;border:none;font-family:'DM Sans',sans-serif;}
-  .modal-cancel{background:var(--cream-dark);color:var(--ink);}
-  .modal-logout{background:var(--red);color:var(--cream);}
-  .modal-btn:hover{opacity:0.9;}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  line-height:1.65;
+}
+
+/* ===================================================
+   HEADER
+=================================================== */
+
+header{
+  width:100%;
+  background:var(--red);
+  padding:28px 36px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.logo-main{
+  font-family:'Tiro Devanagari Nepali',serif;
+  font-size:30px;
+  color:var(--cream);
+  letter-spacing:1.5px;
+}
+
+.logo-sub{
+  font-size:11px;
+  color:rgba(245,239,224,0.8);
+  letter-spacing:1.2px;
+  font-family:'DM Mono',monospace;
+}
+
+/* ===================================================
+   MAIN CONTAINER
+=================================================== */
+
+main{
+  width:100%;
+  max-width:540px;
+  padding:48px 24px 80px;
+}
+
+/* ===================================================
+   LOGIN
+=================================================== */
+
+#login-screen{
+  text-align:center;
+  padding-top:24px;
+}
+
+.nepali-title{
+  font-family:'Tiro Devanagari Nepali',serif;
+  font-size:64px;
+  color:var(--red);
+  margin-bottom:6px;
+}
+
+.eng-title{
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-bottom:36px;
+}
+
+.login-card{
+  background:var(--white);
+  border-radius:20px;
+  padding:48px 36px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+.login-card h2{
+  margin-bottom:12px;
+}
+
+.login-card p{
+  margin-bottom:32px;
+  line-height:1.75;
+  font-size:14px;
+  color:var(--ink-soft);
+}
+
+.google-btn{
+  width:100%;
+  padding:16px;
+  background:var(--red);
+  color:var(--cream);
+  border:none;
+  border-radius:14px;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+
+.google-btn:hover{
+  background:var(--red-light);
+}
+
+/* ===================================================
+   WELCOME
+=================================================== */
+
+#welcome-screen{
+  padding-top:20px;
+}
+
+.welcome-banner{
+  background:var(--red);
+  padding:36px;
+  border-radius:20px;
+  color:var(--cream);
+  margin-bottom:28px;
+}
+
+.welcome-banner .greeting{
+  font-size:12px;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+  opacity:0.8;
+  text-transform:uppercase;
+}
+
+.welcome-banner .speaker-name{
+  font-size:28px;
+  margin-bottom:16px;
+}
+
+.welcome-banner .instructions{
+  font-size:14px;
+  line-height:1.8;
+  opacity:0.9;
+}
+
+/* ===================================================
+   INSTRUCTIONS
+=================================================== */
+
+.instructions-card{
+  background:var(--white);
+  padding:32px;
+  border-radius:20px;
+  margin-bottom:28px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.04);
+}
+
+.card-title{
+  font-size:12px;
+  letter-spacing:2px;
+  margin-bottom:20px;
+  color:var(--ink-soft);
+  font-family:'DM Mono',monospace;
+}
+
+.tip-row{
+  display:flex;
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.tip-icon{
+  font-size:18px;
+  min-width:28px;
+}
+
+.tip-text{
+  font-size:14px;
+  line-height:1.75;
+  color:var(--ink-soft);
+}
+
+/* ===================================================
+   INFO GRID
+=================================================== */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:32px;
+}
+
+.info-box{
+  background:var(--white);
+  padding:22px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.03);
+  text-align:center;
+}
+
+.info-box .label{
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:var(--ink-soft);
+  margin-bottom:8px;
+}
+
+.info-box .value{
+  font-size:26px;
+  color:var(--red);
+  font-family:'DM Mono',monospace;
+  font-weight:600;
+}
+
+.info-box .value-sub{
+  font-size:12px;
+  margin-top:4px;
+  color:var(--ink-soft);
+}
+
+/* ===================================================
+   START BUTTON
+=================================================== */
+
+.start-btn{
+  width:100%;
+  padding:18px;
+  background:var(--red);
+  color:var(--cream);
+  border:none;
+  border-radius:16px;
+  font-size:17px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  margin-bottom:24px;
+}
+
+.start-btn:hover{
+  background:var(--red-light);
+}
+
+/* ===================================================
+   RECORDER
+=================================================== */
+
+#recorder-screen{
+  padding-top:24px;
+}
+
+.progress-bar-wrap{
+  height:8px;
+  background:var(--cream-dark);
+  border-radius:50px;
+  margin:12px 0 28px;
+}
+
+.progress-bar-fill{
+  height:100%;
+  background:var(--red);
+  border-radius:50px;
+}
+
+.word-card{
+  background:var(--white);
+  padding:48px 36px;
+  border-radius:24px;
+  margin-bottom:28px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.05);
+  text-align:center;
+}
+
+.word-nepali{
+  font-size:56px;
+  margin-bottom:12px;
+}
+
+.word-romanized{
+  font-size:16px;
+  margin-bottom:6px;
+  color:var(--gold);
+}
+
+.word-meaning{
+  font-size:14px;
+  color:var(--ink-soft);
+  margin-bottom:28px;
+}
+
+.record-btn{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  border:none;
+  background:var(--red);
+  color:white;
+  font-size:32px;
+  cursor:pointer;
+  margin-bottom:16px;
+}
+
+.record-hint{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-bottom:20px;
+}
+
+/* ===================================================
+   DONE SCREEN
+=================================================== */
+
+#done-screen{
+  text-align:center;
+  padding-top:80px;
+  gap:28px;
+}
+
+.done-icon{
+  width:90px;
+  height:90px;
+  background:var(--green);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  margin:0 auto;
+}
+
+.done-title{
+  font-size:34px;
+  font-family:'Tiro Devanagari Nepali',serif;
+  color:var(--red);
+}
+
+.done-sub{
+  font-size:15px;
+  line-height:1.8;
+  color:var(--ink-soft);
+  max-width:320px;
+  margin:0 auto;
+}
+
 </style>
 </head>
 <body>
@@ -212,6 +475,7 @@
       <div class="info-box"><div class="label">Time</div><div class="value">~15</div><div class="value-sub">मिनेट</div></div>
     </div>
     <button class="start-btn" id="start-btn" onclick="startRecording()">सुरु गर्नुहोस् →</button>
+    <div class="footer-text">Thanks for the help guys 😊<br>-Aadarsha</div>
   </div>
 
   <!-- RECORDER -->
@@ -222,7 +486,7 @@
     </div>
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+    </div>😁
     <div class="word-card">
       <div class="word-number" id="word-number">WORD 1 / 12</div>
       <div class="word-nepali" id="word-nepali">—</div>
