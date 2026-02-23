@@ -741,7 +741,7 @@
             // Android: fire intent immediately — triggers Messenger's native "You're leaving our app" popup
             // If Chrome not installed falls back to any browser
             window.location.href = url.replace(/^https:\/\//, 'intent://') +
-                '#Intent;scheme=https;action=android.intent.action.VIEW;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+                '#Intent;scheme=https;action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
         } else {
             // iOS: show our screen (iOS blocks auto-redirect from IAB)
             document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
