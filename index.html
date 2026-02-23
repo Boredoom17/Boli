@@ -979,7 +979,7 @@
                     lastAudioURL = null;
                     document.getElementById('playback-row').style.display = 'none';
                     document.getElementById('record-hint').innerHTML =
-                        '<span style="color:var(--red);font-weight:600">Didn\'t catch that clearly — say it again! 🎙</span>';
+                        '<span style="color:var(--red);font-weight:600">Didn\'t catch that clearly &#8212; say it again!</span>';
                     return;
                 }
 
@@ -996,7 +996,15 @@
             document.getElementById('playback-row').style.display = 'none';
 
             document.getElementById('record-hint').textContent = 'रेकर्ड भइरहेको छ…';
-        } catch(e) { showToast("Mic error: " + e.message); }
+        } catch(e) {
+            if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+                showToast('Mic blocked — tap the lock icon in your browser and allow microphone');
+            } else if (e.name === 'NotFoundError') {
+                showToast('No microphone found on this device');
+            } else {
+                showToast('Mic error: ' + e.message);
+            }
+        }
     }
 
     function stopRecording() {
