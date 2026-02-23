@@ -1,594 +1,1257 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Boli — बोली</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --red:#8B1A1A;--red-light:#B22222;--cream:#F5EFE0;--cream-dark:#EDE4D0;
-    --ink:#1C1008;--ink-soft:#4A3728;--gold:#C9922A;--green:#2D6A4F;--white:#FDFAF4;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;}
-  header{width:100%;background:var(--red);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
-  .logo{display:flex;flex-direction:column;line-height:1;}
-  .logo-main{font-family:'Tiro Devanagari Nepali',serif;font-size:26px;font-weight:500;color:var(--cream);letter-spacing:2px;}
-  .logo-sub{font-size:10px;color:rgba(245,239,224,0.65);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;font-family:'DM Mono',monospace;}
-  .user-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:99px;padding:6px 12px 6px 6px;cursor:pointer;transition:background 0.2s;}
-  .user-pill:hover{background:rgba(255,255,255,0.2);}
-  .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--white);overflow:hidden;}
-  .user-avatar img{width:100%;height:100%;object-fit:cover;}
-  .user-name{font-size:13px;color:var(--cream);font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  main{width:100%;max-width:480px;padding:0 16px 48px;flex:1;display:flex;flex-direction:column;margin:0 auto;}
-  #login-screen{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px;}
-  .nepali-title{font-family:'Tiro Devanagari Nepali',serif;font-size:64px;color:var(--red);margin-bottom:2px;line-height:1.1;}
-  .eng-title{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:16px;}
-  .login-card{background:var(--white);border-radius:20px;padding:32px 28px;box-shadow:0 4px 32px rgba(0,0,0,0.08);width:100%;max-width:100%;}
-  .login-card h2{font-size:18px;font-weight:600;margin-bottom:6px;}
-  .login-card p{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;}
-  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:var(--red);color:var(--cream);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s,transform 0.1s;font-family:'DM Sans',sans-serif;}
-  .google-btn:hover{background:var(--red-light);}
-  .google-btn:active{transform:scale(0.98);}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boli — बोली</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --red:       #8B1A1A;
+            --red-light: #B22222;
+            --cream:     #F5EFE0;
+            --cream-dark:#EDE4D0;
+            --ink:       #1C1008;
+            --ink-soft:  #4A3728;
+            --gold:      #C9922A;
+            --green:     #2D6A4F;
+            --white:     #FDFAF4;
+        }
 
-  /* ── WELCOME ── */
-  #welcome-screen{display:none;padding-top:24px;}
-  .welcome-banner{background:var(--red);border-radius:20px;padding:28px;color:var(--cream);margin-bottom:16px;}
-  .welcome-banner .greeting{font-size:13px;opacity:0.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
-  .welcome-banner .speaker-name{font-size:26px;font-weight:600;margin-bottom:12px;}
-  .welcome-banner .instructions{font-size:13px;line-height:1.7;opacity:0.85;}
-  .resume-banner{display:none;background:var(--white);border-left:4px solid var(--gold);border-radius:14px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-  .resume-banner .resume-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
-  .resume-banner .resume-text{font-size:13px;color:var(--ink-soft);margin-bottom:12px;}
-  .resume-banner .resume-text strong{color:var(--ink);}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  /* ── INSTRUCTIONS CARD ── */
-  .instructions-card{background:var(--white);border-radius:20px;padding:20px 20px 16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
-  .instructions-card .card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:14px;font-family:'DM Mono',monospace;}
-  .tip-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-  .tip-row:last-child{margin-bottom:0;}
-  .tip-icon{font-size:18px;min-width:26px;text-align:center;margin-top:1px;}
-  .tip-text{font-size:13px;color:var(--ink-soft);line-height:1.6;}
-  .tip-text strong{color:var(--ink);}
+        body {
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-  .info-box{background:var(--white);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-  .info-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:4px;}
-  .info-box .value{font-size:22px;font-weight:700;color:var(--red);font-family:'DM Mono',monospace;}
-  .info-box .value-sub{font-size:11px;color:var(--ink-soft);margin-top:2px;}
-  .start-btn{width:100%;padding:16px;background:var(--red);color:var(--cream);border:none;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,transform 0.1s;letter-spacing:0.5px;}
-  .start-btn:hover{background:var(--red-light);}
-  .start-btn:active{transform:scale(0.98);}
+        header {
+            width: 100%;
+            background: var(--red);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
 
-  /* ── RECORDER ── */
-  #recorder-screen{display:none;padding-top:24px;}
-  .recorder-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-  .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink-soft);font-family:'DM Sans',sans-serif;padding:4px 0;transition:color 0.2s;}
-  .back-btn:hover{color:var(--red);}
-  .progress-bar-wrap{background:var(--cream-dark);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;}
-  .progress-bar-fill{height:100%;background:var(--red);border-radius:99px;transition:width 0.4s ease;}
-  .progress-label{font-size:11px;color:var(--ink-soft);letter-spacing:0.5px;text-align:right;margin-bottom:8px;}
-  .word-card{background:var(--white);border-radius:24px;padding:36px 28px 28px;box-shadow:0 4px 24px rgba(0,0,0,0.07);text-align:center;margin-bottom:20px;}
-  .word-number{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--ink-soft);margin-bottom:12px;font-family:'DM Mono',monospace;}
-  .word-nepali{font-family:'Tiro Devanagari Nepali',serif;font-size:52px;color:var(--red);line-height:1.1;margin-bottom:8px;}
-  .word-romanized{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);margin-bottom:4px;letter-spacing:1px;}
-  .word-meaning{font-size:13px;color:var(--ink-soft);margin-bottom:24px;}
-  .attempts-row{display:flex;justify-content:center;gap:8px;margin-bottom:8px;}
-  .attempt-dot{width:10px;height:10px;border-radius:50%;background:var(--cream-dark);transition:background 0.3s;}
-  .attempt-dot.done{background:var(--green);}
-  .attempt-dot.active{background:var(--gold);transform:scale(1.3);}
-  .attempts-label{font-size:11px;color:var(--ink-soft);letter-spacing:0.5px;}
-  .controls{display:flex;flex-direction:column;align-items:center;gap:16px;}
-  .record-btn{width:80px;height:80px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:32px;transition:transform 0.15s,box-shadow 0.2s;}
-  .record-btn.idle{background:var(--red);box-shadow:0 4px 20px rgba(139,26,26,0.35);}
-  .record-btn.recording{background:#c0392b;animation:pulse-ring 1.2s ease-out infinite;}
-  .record-btn:active{transform:scale(0.93);}
-  @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(192,57,43,0.5);}70%{box-shadow:0 0 0 20px rgba(192,57,43,0);}100%{box-shadow:0 0 0 0 rgba(192,57,43,0);}}
-  .record-hint{font-size:12px;color:var(--ink-soft);text-align:center;min-height:18px;}
-  .playback-row{display:flex;gap:10px;align-items:center;}
-  .small-btn{padding:9px 18px;border-radius:99px;border:2px solid var(--cream-dark);background:var(--white);font-size:13px;font-weight:500;cursor:pointer;color:var(--ink);font-family:'DM Sans',sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
-  .small-btn:hover{border-color:var(--red);color:var(--red);}
-  .small-btn.primary{background:var(--green);border-color:var(--green);color:white;}
-  .small-btn.primary:hover{background:#235c43;border-color:#235c43;}
-  .small-btn.gold{background:var(--gold);border-color:var(--gold);color:white;}
-  .small-btn.gold:hover{background:#b07d1e;border-color:#b07d1e;}
-  .small-btn:disabled{opacity:0.4;cursor:not-allowed;}
-  .upload-indicator{display:none;align-items:center;gap:8px;font-size:12px;color:var(--gold);}
-  .upload-indicator.show{display:flex;}
-  .spinner{width:14px;height:14px;border:2px solid var(--cream-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+        .logo {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
 
-  /* ── DONE ── */
-  #done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 72px);text-align:center;gap:20px;}
-  .done-icon{width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 4px 20px rgba(45,106,79,0.3);}
-  .done-title{font-family:'Tiro Devanagari Nepali',serif;font-size:32px;color:var(--red);}
-  .done-sub{font-size:14px;color:var(--ink-soft);line-height:1.7;max-width:300px;}
-  .done-stats{background:var(--white);border-radius:16px;padding:20px 28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);width:100%;max-width:300px;}
-  .done-stats .stat-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--cream-dark);}
-  .done-stats .stat-row:last-child{border-bottom:none;}
-  .done-stats .stat-val{font-weight:600;color:var(--green);font-family:'DM Mono',monospace;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:10px 20px;border-radius:99px;font-size:13px;transition:transform 0.3s ease;z-index:999;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-  #logout-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;}
-  .modal-content{background:var(--white);border-radius:16px;padding:20px;text-align:center;max-width:300px;width:80%;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
-  .modal-content p{font-size:15px;margin-bottom:16px;}
-  .modal-btns{display:flex;gap:12px;justify-content:center;}
-  .modal-btn{padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;border:none;font-family:'DM Sans',sans-serif;}
-  .modal-cancel{background:var(--cream-dark);color:var(--ink);}
-  .modal-logout{background:var(--red);color:var(--cream);}
-  .modal-btn:hover{opacity:0.9;}
-</style>
+        .logo-main {
+            font-family: 'Tiro Devanagari Nepali', serif;
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--cream);
+            letter-spacing: 2px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: rgba(245,239,224,0.65);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 3px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 99px;
+            padding: 6px 12px 6px 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .user-pill:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--white);
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 13px;
+            color: var(--cream);
+            font-weight: 500;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        main {
+            width: 100%;
+            max-width: 480px;
+            padding: 0 16px 48px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+
+        /* ── LOGIN ── */
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        .nepali-title {
+            font-family: 'Tiro Devanagari Nepali', serif;
+            font-size: 64px;
+            color: var(--red);
+            margin-bottom: 2px;
+            line-height: 1.1;
+        }
+
+        .eng-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 16px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px 28px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .login-card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .login-card p {
+            font-size: 13px;
+            color: var(--ink-soft);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 13px;
+            background: var(--red);
+            color: var(--cream);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .google-btn:hover {
+            background: var(--red-light);
+        }
+
+        .google-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ── WELCOME ── */
+        #welcome-screen {
+            display: none;
+            padding-top: 24px;
+        }
+
+        .welcome-banner {
+            background: var(--red);
+            border-radius: 20px;
+            padding: 28px;
+            color: var(--cream);
+            margin-bottom: 16px;
+        }
+
+        .welcome-banner .greeting {
+            font-size: 13px;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .welcome-banner .speaker-name {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .welcome-banner .instructions {
+            font-size: 13px;
+            line-height: 1.7;
+            opacity: 0.85;
+        }
+
+        .resume-banner {
+            display: none;
+            background: var(--white);
+            border-left: 4px solid var(--gold);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .resume-banner .resume-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .resume-banner .resume-text {
+            font-size: 13px;
+            color: var(--ink-soft);
+            margin-bottom: 12px;
+        }
+
+        .resume-banner .resume-text strong {
+            color: var(--ink);
+        }
+
+        /* ── INSTRUCTIONS CARD ── */
+        .instructions-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px 20px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .instructions-card .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--ink-soft);
+            margin-bottom: 14px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .tip-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .tip-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .tip-icon {
+            font-size: 18px;
+            min-width: 26px;
+            text-align: center;
+            margin-top: 1px;
+        }
+
+        .tip-text {
+            font-size: 13px;
+            color: var(--ink-soft);
+            line-height: 1.6;
+        }
+
+        .tip-text strong {
+            color: var(--ink);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .info-box .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--ink-soft);
+            margin-bottom: 4px;
+        }
+
+        .info-box .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--red);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .info-box .value-sub {
+            font-size: 11px;
+            color: var(--ink-soft);
+            margin-top: 2px;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--red);
+            color: var(--cream);
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn:hover {
+            background: var(--red-light);
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ── Footer thanks message ── */
+        .footer-text {
+            font-size: 12px;
+            color: var(--ink-soft);
+            text-align: center;
+            margin-top: 24px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* ── RECORDER ── */
+        #recorder-screen {
+            display: none;
+            padding-top: 24px;
+        }
+
+        .recorder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--ink-soft);
+            font-family: 'DM Sans', sans-serif;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--red);
+        }
+
+        .progress-bar-wrap {
+            background: var(--cream-dark);
+            border-radius: 99px;
+            height: 6px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--red);
+            border-radius: 99px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: var(--ink-soft);
+            letter-spacing: 0.5px;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+
+        .word-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 36px 28px 28px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .word-number {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--ink-soft);
+            margin-bottom: 12px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .word-nepali {
+            font-family: 'Tiro Devanagari Nepali', serif;
+            font-size: 52px;
+            color: var(--red);
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .word-romanized {
+            font-family: 'DM Mono', monospace;
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .word-meaning {
+            font-size: 13px;
+            color: var(--ink-soft);
+            margin-bottom: 24px;
+        }
+
+        .attempts-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .attempt-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--cream-dark);
+            transition: background 0.3s;
+        }
+
+        .attempt-dot.done {
+            background: var(--green);
+        }
+
+        .attempt-dot.active {
+            background: var(--gold);
+            transform: scale(1.3);
+        }
+
+        .attempts-label {
+            font-size: 11px;
+            color: var(--ink-soft);
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .record-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+
+        .record-btn.idle {
+            background: var(--red);
+            box-shadow: 0 4px 20px rgba(139,26,26,0.35);
+        }
+
+        .record-btn.recording {
+            background: #c0392b;
+            animation: pulse-ring 1.2s ease-out infinite;
+        }
+
+        .record-btn:active {
+            transform: scale(0.93);
+        }
+
+        @keyframes pulse-ring {
+            0%   { box-shadow: 0 0 0 0 rgba(192,57,43,0.5); }
+            70%  { box-shadow: 0 0 0 20px rgba(192,57,43,0); }
+            100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
+        }
+
+        .record-hint {
+            font-size: 12px;
+            color: var(--ink-soft);
+            text-align: center;
+            min-height: 18px;
+        }
+
+        .playback-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .small-btn {
+            padding: 9px 18px;
+            border-radius: 99px;
+            border: 2px solid var(--cream-dark);
+            background: var(--white);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .small-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .small-btn.primary {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .small-btn.primary:hover {
+            background: #235c43;
+            border-color: #235c43;
+        }
+
+        .small-btn.gold {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+        }
+
+        .small-btn.gold:hover {
+            background: #b07d1e;
+            border-color: #b07d1e;
+        }
+
+        .small-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .upload-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--gold);
+        }
+
+        .upload-indicator.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--cream-dark);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── DONE ── */
+        #done-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 72px);
+            text-align: center;
+            gap: 20px;
+        }
+
+        .done-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 4px 20px rgba(45,106,79,0.3);
+        }
+
+        .done-title {
+            font-family: 'Tiro Devanagari Nepali', serif;
+            font-size: 32px;
+            color: var(--red);
+        }
+
+        .done-sub {
+            font-size: 14px;
+            color: var(--ink-soft);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+
+        .done-stats {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .done-stats .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--cream-dark);
+        }
+
+        .done-stats .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .done-stats .stat-val {
+            font-weight: 600;
+            color: var(--green);
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* ── Toast & Modal ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--ink);
+            color: var(--cream);
+            padding: 10px 20px;
+            border-radius: 99px;
+            font-size: 13px;
+            transition: transform 0.3s ease;
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #logout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            max-width: 300px;
+            width: 80%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-content p {
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .modal-cancel {
+            background: var(--cream-dark);
+            color: var(--ink);
+        }
+
+        .modal-logout {
+            background: var(--red);
+            color: var(--cream);
+        }
+
+        .modal-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <span class="logo-main">बोली</span>
-    <span class="logo-sub">Boli — Voice Dataset</span>
-  </div>
-  <div class="user-pill" id="user-pill" style="display:none" onclick="showLogoutModal()">
-    <div class="user-avatar" id="user-avatar">?</div>
-    <span class="user-name" id="user-name-header">—</span>
-  </div>
+    <div class="logo">
+        <span class="logo-main">बोली</span>
+        <span class="logo-sub">Boli — Voice Dataset</span>
+    </div>
+    <div class="user-pill" id="user-pill" style="display:none" onclick="showLogoutModal()">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span class="user-name" id="user-name-header">—</span>
+    </div>
 </header>
 
 <main>
-  <!-- LOGIN -->
-  <div id="login-screen">
-    <div class="nepali-title">बोली</div>
-    <div class="eng-title">Boli · Voice Collection</div>
-    <div class="login-card">
-      <h2>साइन इन गर्नुहोस् / Sign In</h2>
-      <p>NepSpot अनुसन्धानका लागि १२ नेपाली शब्दहरू रेकर्ड गर्नुहोस्।<br/>Record 12 Nepali keywords for NepSpot research.</p>
-      <button class="google-btn" onclick="signInWithGoogle()">
-        <svg width="18" height="18" viewBox="0 0 48 48">
-          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.2 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.5-.2-3-.4-4.5z"/>
-          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 16.3 5 9.7 9 6.3 14.7z"/>
-          <path fill="#4CAF50" d="M24 45c5 0 9.5-1.9 12.9-5l-6-5.1C29.2 36.5 26.7 37.5 24 37.5c-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.7 41.1 16.3 45 24 45z"/>
-          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6 5.1C41.1 36.2 44 31 44 25c0-1.5-.2-3-.4-4.5z"/>
-        </svg>
-        Google बाट साइन इन गर्नुहोस्
-      </button>
-    </div>
-  </div>
-
-  <!-- WELCOME -->
-  <div id="welcome-screen">
-    <div class="welcome-banner">
-      <div class="greeting">स्वागत छ / Welcome</div>
-      <div class="speaker-name" id="welcome-name">—</div>
-      <div class="instructions">
-        तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
-        Your voice helps build Nepali AI. Thank you for contributing!
-      </div>
+    <!-- LOGIN -->
+    <div id="login-screen">
+        <div class="nepali-title">बोली</div>
+        <div class="eng-title">Boli · Voice Collection</div>
+        <div class="login-card">
+            <h2>साइन इन गर्नुहोस् / Sign In</h2>
+            <p>NepSpot अनुसन्धानका लागि १२ नेपाली शब्दहरू रेकर्ड गर्नुहोस्।<br/>Record 12 Nepali keywords for NepSpot research.</p>
+            <button class="google-btn" onclick="signInWithGoogle()">
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.2 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.5-.2-3-.4-4.5z"/>
+                    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 16.3 5 9.7 9 6.3 14.7z"/>
+                    <path fill="#4CAF50" d="M24 45c5 0 9.5-1.9 12.9-5l-6-5.1C29.2 36.5 26.7 37.5 24 37.5c-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.7 41.1 16.3 45 24 45z"/>
+                    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6 5.1C41.1 36.2 44 31 44 25c0-1.5-.2-3-.4-4.5z"/>
+                </svg>
+                Google बाट साइन इन गर्नुहोस्
+            </button>
+        </div>
     </div>
 
-    <!-- Resume banner -->
-    <div class="resume-banner" id="resume-banner">
-      <div class="resume-title">▶ Resume</div>
-      <div class="resume-text" id="resume-text">—</div>
-      <button class="small-btn gold" onclick="resumeRecording()">Continue →</button>
+    <!-- WELCOME -->
+    <div id="welcome-screen">
+        <div class="welcome-banner">
+            <div class="greeting">स्वागत छ / Welcome</div>
+            <div class="speaker-name" id="welcome-name">—</div>
+            <div class="instructions">
+                तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
+                Your voice helps build Nepali AI. Thank you for contributing!
+            </div>
+        </div>
+
+        <!-- Resume banner -->
+        <div class="resume-banner" id="resume-banner">
+            <div class="resume-title">▶ Resume</div>
+            <div class="resume-text" id="resume-text">—</div>
+            <button class="small-btn gold" onclick="resumeRecording()">Continue →</button>
+        </div>
+
+        <!-- Instructions card -->
+        <div class="instructions-card">
+            <div class="card-title">📋 How it works</div>
+
+            <div class="tip-row">
+                <div class="tip-icon">🏠</div>
+                <div class="tip-text"><strong>Find a quiet spot.</strong> A room with no background noise or music is best. Don't record near a fan or open window.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">🎙️</div>
+                <div class="tip-text"><strong>Hold your phone normally</strong> — about 15–20 cm from your mouth. Don't cover the mic or hold it too close.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">🗣️</div>
+                <div class="tip-text"><strong>Speak clearly and naturally.</strong> Say each word the way you'd normally say it in conversation — not too slow, not robotic. Vary your pace slightly across attempts: some normal speed, some a bit faster. This makes the dataset stronger.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">⏱️</div>
+                <div class="tip-text"><strong>Wait 1 second</strong> before and after speaking. Press record → pause → say the word → pause → stop. This prevents cut-off audio.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">🔇</div>
+                <div class="tip-text"><strong>Don't shout.</strong> Normal talking volume is perfect. Shouting distorts the audio and makes it unusable.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">☕</div>
+                <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves after every clip. Just hit ← Back and come back later — you'll resume exactly where you left off.</div>
+            </div>
+            <div class="tip-row">
+                <div class="tip-icon">🔁</div>
+                <div class="tip-text"><strong>Not happy with a recording?</strong> Hit ↺ to retake before saving. Once you press ✓ it's saved to the dataset.</div>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box"><div class="label">Words</div><div class="value">12</div><div class="value-sub">Nepali</div></div>
+            <div class="info-box"><div class="label">Repeat</div><div class="value">10×</div><div class="value-sub">per word</div></div>
+            <div class="info-box"><div class="label">Total</div><div class="value">120</div><div class="value-sub">clips</div></div>
+            <div class="info-box"><div class="label">Time</div><div class="value">~15</div><div class="value-sub">मिनेट</div></div>
+        </div>
+
+        <button class="start-btn" id="start-btn" onclick="startRecording()">सुरु गर्नुहोस् →</button>
+        
+        <!-- Thanks message at the bottom of homepage -->
+        <div class="footer-text">
+            Thanks for the help guys :)<br>
+            -Aadarsha
+        </div>
     </div>
 
-    <!-- Instructions card -->
-    <div class="instructions-card">
-      <div class="card-title">📋 How it works</div>
-
-      <div class="tip-row">
-        <div class="tip-icon">🏠</div>
-        <div class="tip-text"><strong>Find a quiet spot.</strong> A room with no background noise or music is best. Don't record near a fan or open window.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">🎙️</div>
-        <div class="tip-text"><strong>Hold your phone normally</strong> — about 15–20 cm from your mouth. Don't cover the mic or hold it too close.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">🗣️</div>
-        <div class="tip-text"><strong>Speak clearly and naturally.</strong> Say each word the way you'd normally say it in conversation — not too slow, not robotic. Vary your pace slightly across attempts: some normal speed, some a bit faster. This makes the dataset stronger.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">⏱️</div>
-        <div class="tip-text"><strong>Wait 1 second</strong> before and after speaking. Press record → pause → say the word → pause → stop. This prevents cut-off audio.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">🔇</div>
-        <div class="tip-text"><strong>Don't shout.</strong> Normal talking volume is perfect. Shouting distorts the audio and makes it unusable.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">☕</div>
-        <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves after every clip. Just hit ← Back and come back later — you'll resume exactly where you left off.</div>
-      </div>
-      <div class="tip-row">
-        <div class="tip-icon">🔁</div>
-        <div class="tip-text"><strong>Not happy with a recording?</strong> Hit ↺ to retake before saving. Once you press ✓ it's saved to the dataset.</div>
-      </div>
+    <!-- RECORDER -->
+    <div id="recorder-screen">
+        <div class="recorder-header">
+            <button class="back-btn" onclick="goBack()">← Back</button>
+            <span class="progress-label" id="progress-text">Word 1 of 12</span>
+        </div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="word-card">
+            <div class="word-number" id="word-number">WORD 1 / 12</div>
+            <div class="word-nepali" id="word-nepali">—</div>
+            <div class="word-romanized" id="word-romanized">—</div>
+            <div class="word-meaning" id="word-meaning">—</div>
+            <div class="attempts-row" id="attempts-row"></div>
+            <div class="attempts-label" id="attempts-label">Attempt 1 of 10</div>
+        </div>
+        <div class="controls">
+            <button class="record-btn idle" id="record-btn" onclick="toggleRecord()">🎙</button>
+            <div class="record-hint" id="record-hint">थिच्नुहोस् र बोल्नुहोस्</div>
+            <div class="playback-row" id="playback-row" style="display:none">
+                <button class="small-btn" onclick="playBack()">▶ सुन्नुहोस्</button>
+                <button class="small-btn" onclick="retake()">↺ फेरि</button>
+                <button class="small-btn primary" id="save-btn" onclick="saveClip()">✓ राम्रो छ</button>
+            </div>
+            <div class="upload-indicator" id="upload-indicator">
+                <div class="spinner"></div><span>Uploading…</span>
+            </div>
+        </div>
     </div>
 
-    <div class="info-grid">
-      <div class="info-box"><div class="label">Words</div><div class="value">12</div><div class="value-sub">Nepali</div></div>
-      <div class="info-box"><div class="label">Repeat</div><div class="value">10×</div><div class="value-sub">per word</div></div>
-      <div class="info-box"><div class="label">Total</div><div class="value">120</div><div class="value-sub">clips</div></div>
-      <div class="info-box"><div class="label">Time</div><div class="value">~15</div><div class="value-sub">मिनेट</div></div>
+    <!-- DONE -->
+    <div id="done-screen">
+        <div class="done-icon">✓</div>
+        <div class="done-title">धन्यवाद!</div>
+        <div class="done-sub">सबै सुरक्षित भयो। Thank you for contributing to Nepali AI research!</div>
+        <div class="done-stats" id="done-stats"></div>
     </div>
-    <button class="start-btn" id="start-btn" onclick="startRecording()">सुरु गर्नुहोस् →</button>
-  </div>
-
-  <!-- RECORDER -->
-  <div id="recorder-screen">
-    <div class="recorder-header">
-      <button class="back-btn" onclick="goBack()">← Back</button>
-      <span class="progress-label" id="progress-text">Word 1 of 12</span>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
-    </div>
-    <div class="word-card">
-      <div class="word-number" id="word-number">WORD 1 / 12</div>
-      <div class="word-nepali" id="word-nepali">—</div>
-      <div class="word-romanized" id="word-romanized">—</div>
-      <div class="word-meaning" id="word-meaning">—</div>
-      <div class="attempts-row" id="attempts-row"></div>
-      <div class="attempts-label" id="attempts-label">Attempt 1 of 10</div>
-    </div>
-    <div class="controls">
-      <button class="record-btn idle" id="record-btn" onclick="toggleRecord()">🎙</button>
-      <div class="record-hint" id="record-hint">थिच्नुहोस् र बोल्नुहोस्</div>
-      <div class="playback-row" id="playback-row" style="display:none">
-        <button class="small-btn" onclick="playBack()">▶ सुन्नुहोस्</button>
-        <button class="small-btn" onclick="retake()">↺ फेरि</button>
-        <button class="small-btn primary" id="save-btn" onclick="saveClip()">✓ राम्रो छ</button>
-      </div>
-      <div class="upload-indicator" id="upload-indicator">
-        <div class="spinner"></div><span>Uploading…</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- DONE -->
-  <div id="done-screen">
-    <div class="done-icon">✓</div>
-    <div class="done-title">धन्यवाद!</div>
-    <div class="done-sub">सबै सुरक्षित भयो। Thank you for contributing to Nepali AI research!</div>
-    <div class="done-stats" id="done-stats"></div>
-  </div>
 </main>
 
 <div class="toast" id="toast"></div>
 
 <div id="logout-modal">
-  <div class="modal-content">
-    <p>Sign out of Boli?</p>
-    <div class="modal-btns">
-      <button class="modal-btn modal-cancel" onclick="hideLogoutModal()">Cancel</button>
-      <button class="modal-btn modal-logout" onclick="handleSignOut()">Logout</button>
+    <div class="modal-content">
+        <p>Sign out of Boli?</p>
+        <div class="modal-btns">
+            <button class="modal-btn modal-cancel" onclick="hideLogoutModal()">Cancel</button>
+            <button class="modal-btn modal-logout" onclick="handleSignOut()">Logout</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <script type="module">
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    // Your original script (unchanged)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const keywords = [
-    { nepali: "बाल्नु",  romanized: "baalnu",    meaning: "Turn On" },
-    { nepali: "बन्द",    romanized: "banda",     meaning: "Turn Off" },
-    { nepali: "सुरु",    romanized: "suru",      meaning: "Start" },
-    { nepali: "रोक्नु",  romanized: "roknu",     meaning: "Stop / Pause" },
-    { nepali: "माथि",    romanized: "maathi",    meaning: "Up" },
-    { nepali: "तल",      romanized: "tala",      meaning: "Down" },
-    { nepali: "अर्को",   romanized: "arko",      meaning: "Next" },
-    { nepali: "अघिल्लो", romanized: "aghillo",   meaning: "Previous" },
-    { nepali: "फेरि",    romanized: "feri",      meaning: "Repeat" },
-    { nepali: "ठीक छ",  romanized: "thik_chha", meaning: "Confirm / OK" },
-    { nepali: "हुन्छ",   romanized: "huncha",    meaning: "Yes" },
-    { nepali: "होइन",    romanized: "hoina",     meaning: "No" },
-  ];
+    const keywords = [
+        { nepali: "बाल्नु", romanized: "baalnu", meaning: "Turn On" },
+        { nepali: "बन्द", romanized: "banda", meaning: "Turn Off" },
+        { nepali: "सुरु", romanized: "suru", meaning: "Start" },
+        { nepali: "रोक्नु", romanized: "roknu", meaning: "Stop / Pause" },
+        { nepali: "माथि", romanized: "maathi", meaning: "Up" },
+        { nepali: "तल", romanized: "tala", meaning: "Down" },
+        { nepali: "अर्को", romanized: "arko", meaning: "Next" },
+        { nepali: "अघिल्लो", romanized: "aghillo", meaning: "Previous" },
+        { nepali: "फेरि", romanized: "feri", meaning: "Repeat" },
+        { nepali: "ठीक छ", romanized: "thik_chha", meaning: "Confirm / OK" },
+        { nepali: "हुन्छ", romanized: "huncha", meaning: "Yes" },
+        { nepali: "होइन", romanized: "hoina", meaning: "No" },
+    ];
 
-  const ATTEMPTS = 10;
-  let currentUser    = null;
-  let currentWord    = 0;
-  let currentAttempt = 0;
-  let mediaRecorder  = null;
-  let audioChunks    = [];
-  let lastBlob       = null;
-  let lastAudioURL   = null;
-  let isRecording    = false;
-  let uploadedCount  = 0;
-  let currentAudio   = null;
-  let CLOUDINARY_CLOUD  = '';
-  let CLOUDINARY_PRESET = '';
-  let db, auth, provider;
+    const ATTEMPTS = 10;
+    let currentUser = null;
+    let currentWord = 0;
+    let currentAttempt = 0;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let lastBlob = null;
+    let lastAudioURL = null;
+    let isRecording = false;
+    let uploadedCount = 0;
+    let currentAudio = null;
+    let CLOUDINARY_CLOUD = '';
+    let CLOUDINARY_PRESET = '';
+    let db, auth, provider;
 
-  async function init() {
-    try {
-      const res = await fetch('/.netlify/functions/config');
-      const { firebaseConfig, cloudinaryConfig } = await res.json();
-      CLOUDINARY_CLOUD  = cloudinaryConfig.cloud;
-      CLOUDINARY_PRESET = cloudinaryConfig.preset;
-      const app = initializeApp(firebaseConfig);
-      auth     = getAuth(app);
-      provider = new GoogleAuthProvider();
-      db       = getFirestore(app);
+    async function init() {
+        try {
+            const res = await fetch('/.netlify/functions/config');
+            const { firebaseConfig, cloudinaryConfig } = await res.json();
+            CLOUDINARY_CLOUD = cloudinaryConfig.cloud;
+            CLOUDINARY_PRESET = cloudinaryConfig.preset;
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            provider = new GoogleAuthProvider();
+            db = getFirestore(app);
 
-      onAuthStateChanged(auth, async user => {
-        if (user) {
-          currentUser = user;
-          // ── Save user info to Firestore ──
-          await saveUserProfile(user);
-          showScreen('welcome');
-          document.getElementById('welcome-name').textContent =
-            user.displayName || user.email;
-          document.getElementById('user-name-header').textContent =
-            (user.displayName || user.email).split(' ')[0];
-          const avatar = document.getElementById('user-avatar');
-          if (user.photoURL) {
-            avatar.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
-          } else {
-            avatar.textContent = (user.displayName || 'U')[0].toUpperCase();
-          }
-          document.getElementById('user-pill').style.display = 'flex';
-          await loadProgress(user);
-        } else {
-          currentUser = null; resetProgress();
-          showScreen('login');
-          document.getElementById('user-pill').style.display = 'none';
+            onAuthStateChanged(auth, async user => {
+                if (user) {
+                    currentUser = user;
+                    await saveUserProfile(user);
+                    showScreen('welcome');
+                    document.getElementById('welcome-name').textContent = user.displayName || user.email;
+                    document.getElementById('user-name-header').textContent = (user.displayName || user.email).split(' ')[0];
+                    const avatar = document.getElementById('user-avatar');
+                    if (user.photoURL) {
+                        avatar.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
+                    } else {
+                        avatar.textContent = (user.displayName || 'U')[0].toUpperCase();
+                    }
+                    document.getElementById('user-pill').style.display = 'flex';
+                    await loadProgress(user);
+                } else {
+                    currentUser = null;
+                    resetProgress();
+                    showScreen('login');
+                    document.getElementById('user-pill').style.display = 'none';
+                }
+            });
+        } catch(e) {
+            showToast("Failed to load config: " + e.message);
         }
-      });
-    } catch(e) {
-      showToast("Failed to load config: " + e.message);
     }
-  }
 
-  init();
+    init();
 
-  // ── Save user profile to Firestore (free, no card needed) ──
-  async function saveUserProfile(user) {
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      const snap    = await getDoc(userRef);
-      const now     = new Date();
-      if (!snap.exists()) {
-        // First time — create profile
-        await setDoc(userRef, {
-          uid:        user.uid,
-          name:       user.displayName || '',
-          email:      user.email || '',
-          photo:      user.photoURL || '',
-          joinedAt:   now,
-          lastSeen:   now,
-        });
-      } else {
-        // Returning user — just update lastSeen
-        await setDoc(userRef, { lastSeen: now }, { merge: true });
-      }
-    } catch(e) {
-      console.error("Profile save failed:", e.message);
-    }
-  }
-
-  function resetProgress() {
-    currentWord = 0; currentAttempt = 0; uploadedCount = 0;
-    document.getElementById('resume-banner').style.display = 'none';
-    document.getElementById('start-btn').textContent      = 'सुरु गर्नुहोस् →';
-    document.getElementById('start-btn').style.background = 'var(--red)';
-  }
-
-  async function saveProgress() {
-    if (!currentUser) return;
-    try {
-      await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
-        currentWord, currentAttempt, uploadedCount, timestamp: new Date()
-      });
-    } catch(e) { showToast("Save failed: " + e.message); }
-  }
-
-  async function loadProgress(user) {
-    resetProgress();
-    try {
-      const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'boli'));
-      if (!snap.exists()) return;
-      const p = snap.data();
-      if (p.currentWord === 0 && p.currentAttempt === 0) return;
-      const kw = keywords[p.currentWord];
-      document.getElementById('resume-banner').style.display = 'block';
-      document.getElementById('resume-text').innerHTML =
-        `Word <strong>${p.currentWord + 1}/12 — ${kw.nepali} (${kw.romanized})</strong>, attempt ${p.currentAttempt + 1}. <strong>${p.uploadedCount} clips</strong> already saved.`;
-      document.getElementById('start-btn').textContent      = 'Start Fresh';
-      document.getElementById('start-btn').style.background = 'var(--ink-soft)';
-    } catch(e) { showToast("Load failed: " + e.message); }
-  }
-
-  window.resumeRecording = async () => {
-    const snap = await getDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'));
-    if (snap.exists()) {
-      const p = snap.data();
-      currentWord = p.currentWord; currentAttempt = p.currentAttempt; uploadedCount = p.uploadedCount;
-    }
-    showScreen('recorder'); renderWord();
-  };
-
-  window.goBack = async () => {
-    if (isRecording) stopRecording();
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-    await saveProgress();
-    showScreen('welcome');
-    await loadProgress(currentUser);
-    showToast("Progress saved!");
-  };
-
-  window.signInWithGoogle = async () => {
-    try { await signInWithPopup(auth, provider); }
-    catch(e) { showToast("Sign in failed: " + e.message); }
-  };
-
-  window.showLogoutModal = () => { document.getElementById('logout-modal').style.display = 'flex'; };
-  window.hideLogoutModal = () => { document.getElementById('logout-modal').style.display = 'none'; };
-  window.handleSignOut   = async () => {
-    hideLogoutModal(); await saveProgress(); await signOut(auth); resetProgress();
-  };
-
-  function showScreen(name) {
-    ['login','welcome','recorder','done'].forEach(s =>
-      document.getElementById(s + '-screen').style.display = 'none');
-    document.getElementById(name + '-screen').style.display = name === 'done' ? 'flex' : 'block';
-  }
-
-  window.startRecording = async () => {
-    if (currentUser) {
-      await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
-        currentWord: 0, currentAttempt: 0, uploadedCount: 0, timestamp: new Date()
-      });
-    }
-    resetProgress(); showScreen('recorder'); renderWord();
-  };
-
-  function renderWord() {
-    const kw  = keywords[currentWord];
-    const pct = Math.round((currentWord / keywords.length) * 100);
-    document.getElementById('progress-text').textContent  = `Word ${currentWord + 1} of ${keywords.length}`;
-    document.getElementById('progress-fill').style.width  = pct + '%';
-    document.getElementById('word-number').textContent    = `WORD ${currentWord + 1} / ${keywords.length}`;
-    document.getElementById('word-nepali').textContent    = kw.nepali;
-    document.getElementById('word-romanized').textContent = kw.romanized;
-    document.getElementById('word-meaning').textContent   = `"${kw.meaning}"`;
-    document.getElementById('attempts-label').textContent = `Attempt ${currentAttempt + 1} of ${ATTEMPTS}`;
-    const row = document.getElementById('attempts-row');
-    row.innerHTML = '';
-    for (let i = 0; i < ATTEMPTS; i++) {
-      const d = document.createElement('div');
-      d.className = 'attempt-dot' + (i < currentAttempt ? ' done' : i === currentAttempt ? ' active' : '');
-      row.appendChild(d);
-    }
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-    document.getElementById('save-btn').disabled          = false;
-    document.getElementById('record-btn').className       = 'record-btn idle';
-    document.getElementById('record-btn').textContent     = '🎙';
-    document.getElementById('record-hint').textContent    = 'थिच्नुहोस् र बोल्नुहोस्';
-    document.getElementById('playback-row').style.display = 'none';
-    document.getElementById('upload-indicator').classList.remove('show');
-    lastBlob = null; lastAudioURL = null;
-  }
-
-  window.toggleRecord = async () => { isRecording ? stopRecording() : await startMic(); };
-
-  async function startMic() {
-    try {
-      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunks  = [];
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        lastBlob     = new Blob(audioChunks, { type: 'audio/webm' });
-        lastAudioURL = URL.createObjectURL(lastBlob);
-        stream.getTracks().forEach(t => t.stop());
-        document.getElementById('record-btn').className    = 'record-btn idle';
-        document.getElementById('record-btn').textContent  = '🎙';
-        document.getElementById('record-hint').textContent = 'सुन्नुहोस् वा सेभ गर्नुहोस्।';
-        document.getElementById('playback-row').style.display = 'flex';
-        isRecording = false;
-      };
-      mediaRecorder.start();
-      isRecording = true;
-      document.getElementById('record-btn').className    = 'record-btn recording';
-      document.getElementById('record-btn').textContent  = '⏹';
-      document.getElementById('record-hint').textContent = 'रेकर्ड भइरहेको छ…';
-    } catch(e) { showToast("Mic error: " + e.message); }
-  }
-
-  function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-  }
-
-  window.playBack = () => {
-    if (!lastAudioURL) return;
-    if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-    currentAudio = new Audio(lastAudioURL);
-    currentAudio.play();
-    currentAudio.onended = () => { currentAudio = null; };
-  };
-
-  window.retake = () => {
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-    lastBlob = null; lastAudioURL = null;
-    document.getElementById('playback-row').style.display = 'none';
-    document.getElementById('record-hint').textContent    = 'थिच्नुहोस् र बोल्नुहोस्';
-  };
-
-  window.saveClip = async () => {
-    if (!lastBlob || !currentUser) return;
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-    const saveBtn = document.getElementById('save-btn');
-    saveBtn.disabled = true;
-    document.getElementById('upload-indicator').classList.add('show');
-
-    const speaker  = currentUser.uid + '_' +
-      (currentUser.displayName || currentUser.email).replace(/\s+/g, '_');
-    const keyword  = keywords[currentWord].romanized;
-    const filename = `${speaker}_${keyword}_attempt_${String(currentAttempt + 1).padStart(2, '0')}`;
-
-    const formData = new FormData();
-    formData.append('file', lastBlob, filename + '.webm');
-    formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('folder', `recordings/${speaker}/${keyword}`);
-    formData.append('public_id', filename);
-
-    try {
-      const res  = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`,
-        { method: 'POST', body: formData }
-      );
-      const data = await res.json();
-      if (data.secure_url) {
-        uploadedCount++; currentAttempt++;
-        await saveProgress();
-        showToast("✓ Saved!");
-        if (currentAttempt >= ATTEMPTS) {
-          currentAttempt = 0; currentWord++;
-          if (currentWord >= keywords.length) { await showDone(); return; }
+    async function saveUserProfile(user) {
+        try {
+            const userRef = doc(db, 'users', user.uid);
+            const snap = await getDoc(userRef);
+            const now = new Date();
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    name: user.displayName || '',
+                    email: user.email || '',
+                    photo: user.photoURL || '',
+                    joinedAt: now,
+                    lastSeen: now,
+                });
+            } else {
+                await setDoc(userRef, { lastSeen: now }, { merge: true });
+            }
+        } catch(e) {
+            console.error("Profile save failed:", e.message);
         }
+    }
+
+    function resetProgress() {
+        currentWord = 0;
+        currentAttempt = 0;
+        uploadedCount = 0;
+        document.getElementById('resume-banner').style.display = 'none';
+        document.getElementById('start-btn').textContent = 'सुरु गर्नुहोस् →';
+        document.getElementById('start-btn').style.background = 'var(--red)';
+    }
+
+    async function saveProgress() {
+        if (!currentUser) return;
+        try {
+            await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
+                currentWord, currentAttempt, uploadedCount, timestamp: new Date()
+            });
+        } catch(e) { showToast("Save failed: " + e.message); }
+    }
+
+    async function loadProgress(user) {
+        resetProgress();
+        try {
+            const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'boli'));
+            if (!snap.exists()) return;
+            const p = snap.data();
+            if (p.currentWord === 0 && p.currentAttempt === 0) return;
+            const kw = keywords[p.currentWord];
+            document.getElementById('resume-banner').style.display = 'block';
+            document.getElementById('resume-text').innerHTML =
+                `Word <strong>${p.currentWord + 1}/12 — ${kw.nepali} (${kw.romanized})</strong>, attempt ${p.currentAttempt + 1}. <strong>${p.uploadedCount} clips</strong> already saved.`;
+            document.getElementById('start-btn').textContent = 'Start Fresh';
+            document.getElementById('start-btn').style.background = 'var(--ink-soft)';
+        } catch(e) { showToast("Load failed: " + e.message); }
+    }
+
+    window.resumeRecording = async () => {
+        const snap = await getDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'));
+        if (snap.exists()) {
+            const p = snap.data();
+            currentWord = p.currentWord;
+            currentAttempt = p.currentAttempt;
+            uploadedCount = p.uploadedCount;
+        }
+        showScreen('recorder');
         renderWord();
-      } else {
-        throw new Error(data.error?.message || 'Upload failed');
-      }
-    } catch(e) {
-      showToast("Upload failed: " + e.message);
-      saveBtn.disabled = false;
-    }
-    document.getElementById('upload-indicator').classList.remove('show');
-  };
+    };
 
-  async function showDone() {
-    if (currentUser) {
-      await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
-        currentWord: 0, currentAttempt: 0, uploadedCount: 0, timestamp: new Date()
-      });
-      // Mark as completed in user profile
-      await setDoc(doc(db, 'users', currentUser.uid), {
-        completedAt: new Date(),
-        totalClips: uploadedCount
-      }, { merge: true });
-    }
-    showScreen('done');
-    document.getElementById('done-stats').innerHTML = `
-      <div class="stat-row"><span>Speaker</span><span class="stat-val">${currentUser.displayName || currentUser.email}</span></div>
-      <div class="stat-row"><span>Keywords</span><span class="stat-val">${keywords.length}</span></div>
-      <div class="stat-row"><span>Clips</span><span class="stat-val">${uploadedCount}</span></div>
-      <div class="stat-row"><span>Saved</span><span class="stat-val">✓ Yes</span></div>
-    `;
-    resetProgress();
-  }
+    window.goBack = async () => {
+        if (isRecording) stopRecording();
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        await saveProgress();
+        showScreen('welcome');
+        await loadProgress(currentUser);
+        showToast("Progress saved!");
+    };
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
+    window.signInWithGoogle = async () => {
+        try { await signInWithPopup(auth, provider); }
+        catch(e) { showToast("Sign in failed: " + e.message); }
+    };
+
+    window.showLogoutModal = () => { document.getElementById('logout-modal').style.display = 'flex'; };
+    window.hideLogoutModal = () => { document.getElementById('logout-modal').style.display = 'none'; };
+    window.handleSignOut = async () => {
+        hideLogoutModal();
+        await saveProgress();
+        await signOut(auth);
+        resetProgress();
+    };
+
+    function showScreen(name) {
+        ['login','welcome','recorder','done'].forEach(s =>
+            document.getElementById(s + '-screen').style.display = 'none');
+        document.getElementById(name + '-screen').style.display = name === 'done' ? 'flex' : 'block';
+    }
+
+    window.startRecording = async () => {
+        if (currentUser) {
+            await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
+                currentWord: 0, currentAttempt: 0, uploadedCount: 0, timestamp: new Date()
+            });
+        }
+        resetProgress();
+        showScreen('recorder');
+        renderWord();
+    };
+
+    function renderWord() {
+        const kw = keywords[currentWord];
+        const pct = Math.round((currentWord / keywords.length) * 100);
+        document.getElementById('progress-text').textContent = `Word ${currentWord + 1} of ${keywords.length}`;
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('word-number').textContent = `WORD ${currentWord + 1} / ${keywords.length}`;
+        document.getElementById('word-nepali').textContent = kw.nepali;
+        document.getElementById('word-romanized').textContent = kw.romanized;
+        document.getElementById('word-meaning').textContent = `"${kw.meaning}"`;
+        document.getElementById('attempts-label').textContent = `Attempt ${currentAttempt + 1} of ${ATTEMPTS}`;
+        const row = document.getElementById('attempts-row');
+        row.innerHTML = '';
+        for (let i = 0; i < ATTEMPTS; i++) {
+            const d = document.createElement('div');
+            d.className = 'attempt-dot' + (i < currentAttempt ? ' done' : i === currentAttempt ? ' active' : '');
+            row.appendChild(d);
+        }
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById('save-btn').disabled = false;
+        document.getElementById('record-btn').className = 'record-btn idle';
+        document.getElementById('record-btn').textContent = '🎙';
+        document.getElementById('record-hint').textContent = 'थिच्नुहोस् र बोल्नुहोस्';
+        document.getElementById('playback-row').style.display = 'none';
+        document.getElementById('upload-indicator').classList.remove('show');
+        lastBlob = null;
+        lastAudioURL = null;
+    }
+
+    window.toggleRecord = async () => { isRecording ? stopRecording() : await startMic(); };
+
+    async function startMic() {
+        try {
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioChunks = [];
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                lastBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                lastAudioURL = URL.createObjectURL(lastBlob);
+                stream.getTracks().forEach(t => t.stop());
+                document.getElementById('record-btn').className = 'record-btn idle';
+                document.getElementById('record-btn').textContent = '🎙';
+                document.getElementById('record-hint').textContent = 'सुन्नुहोस् वा सेभ गर्नुहोस्।';
+                document.getElementById('playback-row').style.display = 'flex';
+                isRecording = false;
+            };
+            mediaRecorder.start();
+            isRecording = true;
+            document.getElementById('record-btn').className = 'record-btn recording';
+            document.getElementById('record-btn').textContent = '⏹';
+            document.getElementById('record-hint').textContent = 'रेकर्ड भइरहेको छ…';
+        } catch(e) { showToast("Mic error: " + e.message); }
+    }
+
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    }
+
+    window.playBack = () => {
+        if (!lastAudioURL) return;
+        if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+        currentAudio = new Audio(lastAudioURL);
+        currentAudio.play();
+        currentAudio.onended = () => { currentAudio = null; };
+    };
+
+    window.retake = () => {
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        lastBlob = null;
+        lastAudioURL = null;
+        document.getElementById('playback-row').style.display = 'none';
+        document.getElementById('record-hint').textContent = 'थिच्नुहोस् र बोल्नुहोस्';
+    };
+
+    window.saveClip = async () => {
+        if (!lastBlob || !currentUser) return;
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.disabled = true;
+        document.getElementById('upload-indicator').classList.add('show');
+
+        const speaker = currentUser.uid + '_' + (currentUser.displayName || currentUser.email).replace(/\s+/g, '_');
+        const keyword = keywords[currentWord].romanized;
+        const filename = `${speaker}_${keyword}_attempt_${String(currentAttempt + 1).padStart(2, '0')}`;
+
+        const formData = new FormData();
+        formData.append('file', lastBlob, filename + '.webm');
+        formData.append('upload_preset', CLOUDINARY_PRESET);
+        formData.append('folder', `recordings/${speaker}/${keyword}`);
+        formData.append('public_id', filename);
+
+        try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.secure_url) {
+                uploadedCount++;
+                currentAttempt++;
+                await saveProgress();
+                showToast("✓ Saved!");
+                if (currentAttempt >= ATTEMPTS) {
+                    currentAttempt = 0;
+                    currentWord++;
+                    if (currentWord >= keywords.length) {
+                        await showDone();
+                        return;
+                    }
+                }
+                renderWord();
+            } else {
+                throw new Error(data.error?.message || 'Upload failed');
+            }
+        } catch(e) {
+            showToast("Upload failed: " + e.message);
+            saveBtn.disabled = false;
+        }
+        document.getElementById('upload-indicator').classList.remove('show');
+    };
+
+    async function showDone() {
+        if (currentUser) {
+            await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'boli'), {
+                currentWord: 0, currentAttempt: 0, uploadedCount: 0, timestamp: new Date()
+            });
+            await setDoc(doc(db, 'users', currentUser.uid), {
+                completedAt: new Date(),
+                totalClips: uploadedCount
+            }, { merge: true });
+        }
+        showScreen('done');
+        document.getElementById('done-stats').innerHTML = `
+            <div class="stat-row"><span>Speaker</span><span class="stat-val">${currentUser.displayName || currentUser.email}</span></div>
+            <div class="stat-row"><span>Keywords</span><span class="stat-val">${keywords.length}</span></div>
+            <div class="stat-row"><span>Clips</span><span class="stat-val">${uploadedCount}</span></div>
+            <div class="stat-row"><span>Saved</span><span class="stat-val">✓ Yes</span></div>
+        `;
+        resetProgress();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
 </script>
 </body>
 </html>
