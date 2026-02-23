@@ -214,23 +214,12 @@
 </div>
 
 <script type="module">
-  // ── All secrets come from this one gitignored file ──
-  import { firebaseConfig, cloudinaryConfig } from "./firebase-config.js";
-
   import { initializeApp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const CLOUDINARY_CLOUD  = cloudinaryConfig.cloud;
-  const CLOUDINARY_PRESET = cloudinaryConfig.preset;
-
-  const app      = initializeApp(firebaseConfig);
-  const auth     = getAuth(app);
-  const provider = new GoogleAuthProvider();
-  const db       = getFirestore(app);
 
   const keywords = [
     { nepali: "बाल्नु",  romanized: "baalnu",    meaning: "Turn On" },
@@ -257,7 +246,50 @@
   let lastAudioURL   = null;
   let isRecording    = false;
   let uploadedCount  = 0;
-  let currentAudio   = null; // tracks active audio to prevent overlap
+  let currentAudio   = null;
+  let CLOUDINARY_CLOUD  = '';
+  let CLOUDINARY_PRESET = '';
+  let db, auth, provider;
+
+  // ── Fetch config from Netlify function (keys never exposed in code) ──
+  async function init() {
+    try {
+      const res = await fetch('/.netlify/functions/config');
+      const { firebaseConfig, cloudinaryConfig } = await res.json();
+      CLOUDINARY_CLOUD  = cloudinaryConfig.cloud;
+      CLOUDINARY_PRESET = cloudinaryConfig.preset;
+      const app = initializeApp(firebaseConfig);
+      auth     = getAuth(app);
+      provider = new GoogleAuthProvider();
+      db       = getFirestore(app);
+      onAuthStateChanged(auth, async user => {
+        if (user) {
+          currentUser = user;
+          showScreen('welcome');
+          document.getElementById('welcome-name').textContent =
+            user.displayName || user.email;
+          document.getElementById('user-name-header').textContent =
+            (user.displayName || user.email).split(' ')[0];
+          const avatar = document.getElementById('user-avatar');
+          if (user.photoURL) {
+            avatar.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
+          } else {
+            avatar.textContent = (user.displayName || 'U')[0].toUpperCase();
+          }
+          document.getElementById('user-pill').style.display = 'flex';
+          await loadProgress(user);
+        } else {
+          currentUser = null; resetProgress();
+          showScreen('login');
+          document.getElementById('user-pill').style.display = 'none';
+        }
+      });
+    } catch(e) {
+      showToast("Failed to load config: " + e.message);
+    }
+  }
+
+  init();
 
   function resetProgress() {
     currentWord = 0; currentAttempt = 0; uploadedCount = 0;
@@ -308,29 +340,6 @@
     await loadProgress(currentUser);
     showToast("Progress saved!");
   };
-
-  onAuthStateChanged(auth, async user => {
-    if (user) {
-      currentUser = user;
-      showScreen('welcome');
-      document.getElementById('welcome-name').textContent =
-        user.displayName || user.email;
-      document.getElementById('user-name-header').textContent =
-        (user.displayName || user.email).split(' ')[0];
-      const avatar = document.getElementById('user-avatar');
-      if (user.photoURL) {
-        avatar.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
-      } else {
-        avatar.textContent = (user.displayName || 'U')[0].toUpperCase();
-      }
-      document.getElementById('user-pill').style.display = 'flex';
-      await loadProgress(user);
-    } else {
-      currentUser = null; resetProgress();
-      showScreen('login');
-      document.getElementById('user-pill').style.display = 'none';
-    }
-  });
 
   window.signInWithGoogle = async () => {
     try { await signInWithPopup(auth, provider); }
