@@ -515,7 +515,7 @@
             <div class="info-box"><div class="label">Time</div><div class="value">~15</div><div class="value-sub">मिनेट</div></div>
         </div>
 
-        <button class="start-btn" onclick="goToStage()">सुरु गर्नुहोस् →</button>
+        <button class="start-btn" id="mic-check-btn" onclick="requestMicThenStart()" style="margin-bottom:10px">🎙️ Microphone जाँच गर्नुहोस् र सुरु गर्नुहोस् →</button>
 
         <div class="footer-text">
             Thanks for the help guys :)<br>
@@ -700,10 +700,7 @@
                     await loadProgress(user);
                     showScreen('welcome');
                     document.getElementById('welcome-name').textContent = user.displayName || user.email;
-                    // Request mic permission immediately on login so browser prompts user right away
-                    navigator.mediaDevices.getUserMedia({ audio: true })
-                        .then(stream => { stream.getTracks().forEach(t => t.stop()); }) // got it, stop immediately
-                        .catch(() => {}); // silently ignore — we'll handle denial when they record
+
                 } else {
                     currentUser = null;
                     wordProgress = {};
@@ -852,6 +849,16 @@
     }
 
     /* ─── NAVIGATION ─── */
+    window.requestMicThenStart = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(t => t.stop()); // permission granted, stop stream
+            goToStage();
+        } catch(e) {
+            document.getElementById('mic-denied-modal').classList.add('show');
+        }
+    };
+
     window.goToStage = () => {
         renderStage();
         showScreen('stage');
