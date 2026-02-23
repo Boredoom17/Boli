@@ -96,6 +96,19 @@
         .google-btn:hover { background: var(--red-light); }
         .google-btn:active { transform: scale(0.98); }
 
+        /* ── IN-APP BROWSER WARNING ── */
+        #iab-screen { padding-top: 60px; text-align: center; }
+        .iab-icon { font-size: 56px; margin-bottom: 16px; }
+        .iab-card { background: var(--white); border-radius: 20px; padding: 32px 24px; box-shadow: 0 4px 32px rgba(0,0,0,0.08); }
+        .iab-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--ink); }
+        .iab-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 20px; }
+        .iab-url { background: var(--cream-dark); border-radius: 10px; padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink); margin-bottom: 20px; word-break: break-all; }
+        .iab-copy-btn { width: 100%; padding: 13px; background: var(--red); color: var(--cream); border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+        .iab-copy-btn:hover { background: var(--red-light); }
+        .iab-steps { text-align: left; margin-top: 20px; border-top: 1px solid var(--cream-dark); padding-top: 16px; }
+        .iab-step { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+        .iab-step-num { background: var(--red); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; min-width: 20px; margin-top: 1px; }
+
         /* ── WELCOME ── */
         #welcome-screen { padding-top: 24px; }
 
@@ -419,6 +432,21 @@
         </div>
     </div>
 
+    <!-- IN-APP BROWSER WARNING -->
+    <div id="iab-screen" class="screen">
+        <div class="iab-icon">🌐</div>
+        <div class="iab-card">
+            <h2>Open in your browser</h2>
+            <p>Instagram and Messenger's built-in browser doesn't support Google Sign-In. Please open this link in <strong>Chrome, Safari, or Firefox</strong> to continue.</p>
+            <div class="iab-url" id="iab-url-display">boli.netlify.app</div>
+            <button class="iab-copy-btn" onclick="openInBrowser()">🌐 Open in Browser</button>
+            <button class="iab-copy-btn" onclick="copyLink()" style="margin-top:10px;background:none;border:2px solid var(--cream-dark);color:var(--ink);">📋 Copy link instead</button>
+            <div class="iab-steps">
+                <div class="iab-step"><div class="iab-step-num">!</div><span>If the button above doesn't work, tap the <strong>⋯ menu</strong> at the top right and choose <strong>"Open in browser"</strong></span></div>
+            </div>
+        </div>
+    </div>
+
     <!-- WELCOME -->
     <div id="welcome-screen" class="screen">
         <div class="welcome-banner">
@@ -426,7 +454,7 @@
             <div class="speaker-name" id="welcome-name">—</div>
             <div class="instructions">
                 तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
-                Thank you for contributing!
+                Your voice helps build Nepali AI. Thank you for contributing!
             </div>
         </div>
 
@@ -454,7 +482,7 @@
             </div>
             <div class="tip-row">
                 <div class="tip-icon">☕</div>
-                <div class="tip-text"><strong>Bored? Take a break anytime.</strong> Your progress auto-saves. Come back and pick up any word you haven't finished.</div>
+                <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves. Come back and pick up any word you haven't finished.</div>
             </div>
             <div class="tip-row">
                 <div class="tip-icon">🔁</div>
@@ -544,7 +572,7 @@
     <div id="done-screen" class="screen">
         <div class="done-icon">✓</div>
         <div class="done-title">धन्यवाद!</div>
-        <div class="done-sub">Thank you for helping me to create this dataset. Your help will be valuable.</div>
+        <div class="done-sub">Thank you for helping me create a dataset. Your help will be valuable.</div>
         <div class="done-stats" id="done-stats"></div>
         <button class="done-ok-btn" onclick="handleDoneOK()">OK</button>
     </div>
@@ -642,6 +670,60 @@
     }
 
     init();
+
+    /* ─── IN-APP BROWSER DETECTION ─── */
+    function isInAppBrowser() {
+        const ua = navigator.userAgent || '';
+        return (
+            ua.includes('FBAN') ||       // Facebook
+            ua.includes('FBAV') ||       // Facebook
+            ua.includes('FBIOS') ||      // Facebook iOS
+            ua.includes('Instagram') ||  // Instagram
+            ua.includes('Messenger') ||  // Messenger
+            ua.includes('FB_IAB') ||     // Facebook in-app
+            ua.includes('FB4A') ||       // Facebook Android
+            (ua.includes('iPhone') && ua.includes('AppleWebKit') && !ua.includes('Safari')) // iOS in-app generic
+        );
+    }
+
+    if (isInAppBrowser()) {
+        document.getElementById('iab-url-display').textContent = window.location.href;
+        // Show IAB warning immediately, don't even try Firebase
+        document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
+        const iab = document.getElementById('iab-screen');
+        iab.style.display = '';
+        iab.classList.add('active');
+    }
+
+    window.openInBrowser = () => {
+        const url = window.location.href;
+        const ua = navigator.userAgent || '';
+
+        // Android: use intent:// to force open in default browser
+        if (/android/i.test(ua)) {
+            const intentUrl = url.replace('https://', 'intent://').replace('http://', 'intent://') +
+                '#Intent;scheme=https;action=android.intent.action.VIEW;end';
+            window.location.href = intentUrl;
+            return;
+        }
+
+        // iOS: try opening with window.open which sometimes escapes IAB
+        const newWin = window.open(url, '_blank');
+        if (!newWin || newWin.closed) {
+            // Blocked — fall back to copy
+            window.copyLink();
+            showToast("Tap ⋯ menu → Open in browser");
+        }
+    };
+
+    window.copyLink = () => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('Link copied! Paste it in Chrome or Safari');
+        }).catch(() => {
+            showToast('Copy this link: ' + url);
+        });
+    };
 
     /* ─── USER PROFILE ─── */
     async function saveUserProfile(user) {
