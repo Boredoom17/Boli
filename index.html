@@ -988,9 +988,7 @@
                     lastBlob = null;
                     lastAudioURL = null;
                     document.getElementById('playback-row').style.display = 'none';
-                    document.getElementById('record-hint').innerHTML =
-                        '<span style="color:var(--red);font-weight:600"</span>';
-                          '<span style="color:var(--red);font-weight:600">Didn&#39;t catch that clearly &#8212; say it again!</span>';
+                    document.getElementById('record-hint').textContent = "Didn't catch that clearly — say it again!";
                     return;
                 }
 
