@@ -483,7 +483,7 @@
             <div class="speaker-name" id="welcome-name">—</div>
             <div class="instructions">
                 तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
-                Thank you for contributing!
+                Your voice helps build Nepali AI. Thank you for contributing!
             </div>
         </div>
 
@@ -511,7 +511,7 @@
             </div>
             <div class="tip-row">
                 <div class="tip-icon">☕</div>
-                <div class="tip-text"><strong>Bored? Take a break anytime.</strong> Your progress auto-saves. Come back and pick up any word you haven't finished.</div>
+                <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves. Come back and pick up any word you haven't finished.</div>
             </div>
             <div class="tip-row">
                 <div class="tip-icon">🔁</div>
@@ -529,7 +529,7 @@
         <button class="start-btn" onclick="requestMicThenStart()">सुरु गर्नुहोस् →</button>
 
         <div class="footer-text">
-            Thanks for the help guys 😁<br>
+            Thanks for the help guys :)<br>
             -Aadarsha
         </div>
     </div>
@@ -605,6 +605,9 @@
         <div class="done-stats" id="done-stats"></div>
         <button class="done-ok-btn" onclick="handleDoneOK()">OK</button>
     </div>
+
+    <!-- HIDDEN AUDIO PLAYER for iOS compatibility -->
+    <audio id="audio-player" style="display:none"></audio>
 
     <!-- MIC DENIED MODAL -->
     <div class="mic-denied-overlay" id="mic-denied-modal">
@@ -685,7 +688,7 @@
     let lastBlob        = null;
     let lastAudioURL    = null;
     let isRecording     = false;
-    let currentAudio    = null;
+    // currentAudio is now the DOM element #audio-player (iOS compatible)
     let recordStartTime = 0;
 
     /* ─── INIT ─── */
@@ -1005,12 +1008,12 @@
         recordBtn.disabled = isDone;
 
         // Reset recording state
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById("audio-player").pause();
         lastBlob = null;
         lastAudioURL = null;
         document.getElementById('record-btn').className = 'record-btn idle';
         document.getElementById('record-btn').textContent = '🎙';
-        document.getElementById('record-hint').textContent = isDone ? 'अब प्रयास पूरा भयो' : 'थिच्नुहोस् र बोल्नुहोस्';
+        document.getElementById('record-hint').textContent = isDone ? 'সब प्रयास पूरा भए' : 'थिच्नुहोस् र बोल्नुहोस्';
         document.getElementById('playback-row').style.display = 'none';
         document.getElementById('save-btn').disabled = false;
         document.getElementById('upload-indicator').classList.remove('show');
@@ -1018,13 +1021,13 @@
 
     window.goBackToWelcome = () => {
         if (isRecording) stopRecording();
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById("audio-player").pause();
         showScreen('welcome');
     };
 
     window.goBackToStage = async () => {
         if (isRecording) stopRecording();
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById("audio-player").pause();
         renderStage();
         showScreen('stage');
         showToast("Progress saved!");
@@ -1036,7 +1039,7 @@
     async function startMic() {
         if (currentAttempt >= MAX_ATTEMPTS) { showToast("This word is complete!"); return; }
         try {
-            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            document.getElementById("audio-player").pause();
             // More permissive audio constraints for mobile browsers
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -1049,7 +1052,9 @@
                 return await navigator.mediaDevices.getUserMedia({ audio: true });
             });
             audioChunks  = [];
-            mediaRecorder = new MediaRecorder(stream);
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 
+                             MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+            mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
                 const duration = Date.now() - recordStartTime;
@@ -1067,7 +1072,9 @@
                     return;
                 }
 
-                lastBlob     = new Blob(audioChunks, { type: 'audio/webm' });
+                // Safari/iOS needs mp4, other browsers use webm
+                const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+                lastBlob     = new Blob(audioChunks, { type: mimeType });
                 lastAudioURL = URL.createObjectURL(lastBlob);
                 document.getElementById('record-hint').textContent = 'सुन्नुहोस् वा सेभ गर्नुहोस्।';
                 document.getElementById('playback-row').style.display = 'flex';
@@ -1097,14 +1104,16 @@
 
     window.playBack = () => {
         if (!lastAudioURL) { showToast("No recording to play"); return; }
-        if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-        currentAudio = new Audio(lastAudioURL);
-        currentAudio.play().catch(e => showToast("Playback failed: " + e.message));
-        currentAudio.onended = () => { currentAudio = null; };
+        const player = document.getElementById("audio-player");
+        player.pause();
+        player.currentTime = 0;
+        player.src = lastAudioURL;
+        player.load();
+        player.play().catch(e => showToast("Playback failed: " + e.message));
     };
 
     window.retake = () => {
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById("audio-player").pause();
         lastBlob = null; lastAudioURL = null;
         document.getElementById('playback-row').style.display = 'none';
         document.getElementById('record-hint').textContent = 'थिच्नुहोस् र बोल्नुहोस्';
@@ -1113,7 +1122,7 @@
     window.saveClip = async () => {
         if (!lastBlob || !currentUser) return;
         if (currentAttempt >= MAX_ATTEMPTS) { showToast("Already at 10/10!"); return; }
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        document.getElementById("audio-player").pause();
 
         const saveBtn = document.getElementById('save-btn');
         saveBtn.disabled = true;
@@ -1126,7 +1135,8 @@
         const filename = `${speaker}_${keyword}_attempt_${String(attemptNum).padStart(2, '0')}`;
 
         const formData = new FormData();
-        formData.append('file', lastBlob, filename + '.webm');
+        const ext = lastBlob.type.includes('mp4') ? 'mp4' : 'webm';
+        formData.append('file', lastBlob, filename + '.' + ext);
         formData.append('upload_preset', CLOUDINARY_PRESET);
         formData.append('folder', `recordings/${speaker}/${keyword}`);
         formData.append('public_id', filename);
