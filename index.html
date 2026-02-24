@@ -74,7 +74,6 @@
         .screen { display: none; }
         .screen.active { display: block; }
         #done-screen.active { display: flex; flex-direction: column; }
-        /* Show loading by default until Firebase decides */
         #loading-screen { display: flex; }
 
         /* ── LOADING ── */
@@ -120,7 +119,6 @@
         .welcome-banner { background: var(--red); border-radius: 20px; padding: 28px; color: var(--cream); margin-bottom: 16px; }
         .welcome-banner .greeting { font-size: 13px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
         .welcome-banner .speaker-name { font-size: 26px; font-weight: 600; margin-bottom: 12px; }
-        .welcome-banner .instructions { font-size: 13px; line-height: 1.7; opacity: 0.85; }
         .welcome-about { display: grid; grid-template-columns: 1fr 2px 1fr; gap: 14px; margin-top: 4px; }
         .welcome-about-ne { font-size: 12px; line-height: 1.7; opacity: 0.88; font-family: "Tiro Devanagari Nepali", serif; }
         .welcome-about-en { font-size: 12px; line-height: 1.7; opacity: 0.88; }
@@ -180,7 +178,6 @@
         .overall-bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.5s ease; }
         .overall-bar-label { font-size: 11px; color: var(--ink-soft); text-align: right; }
 
-        /* Word grid */
         .word-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -297,13 +294,36 @@
         .word-romanized { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--gold); margin-bottom: 4px; letter-spacing: 1px; }
         .word-meaning { font-size: 13px; color: var(--ink-soft); margin-bottom: 24px; }
 
+        /* ── WORD HIGHLIGHT ── */
+        .word-highlight-wrap {
+            background: rgba(139,26,26,0.07);
+            border: 2px solid var(--red);
+            border-radius: 16px;
+            padding: 12px 24px 8px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .word-say-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'DM Mono', monospace;
+            text-align: center;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
         .attempts-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
         .attempt-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cream-dark); transition: background 0.3s; }
         .attempt-dot.done { background: var(--green); }
         .attempt-dot.active { background: var(--gold); transform: scale(1.3); }
         .attempts-label { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.5px; }
 
-        /* Completed word overlay */
         .word-completed-banner {
             display: none;
             background: var(--green);
@@ -479,7 +499,7 @@
         <div class="iab-card">
             <h2>Open in your browser</h2>
             <p>Instagram and Messenger's built-in browser doesn't support Google Sign-In. Please open this link in <strong>Chrome, Safari, or Firefox</strong> to continue.</p>
-            <div class="iab-url" id="iab-url-display">boli.netlify.app</div>
+            <div class="iab-url" id="iab-url-display">aawaj.netlify.app</div>
             <button class="iab-copy-btn" onclick="openInBrowser()">🌐 Open in Browser</button>
             <button class="iab-copy-btn" onclick="copyLink()" style="margin-top:10px;background:none;border:2px solid var(--cream-dark);color:var(--ink);">📋 Copy link instead</button>
             <div class="iab-steps">
@@ -556,7 +576,6 @@
             <div class="overall-bar-label" id="overall-bar-label">0 / 120 clips recorded</div>
         </div>
 
-        <!-- All-done banner (shown when all 12 words complete) -->
         <div class="stage-all-done" id="stage-all-done">
             🎉 Thank you for helping me create a dataset. Your help will be valuable!<br>
             <button class="done-ok-btn" style="margin-top:14px" onclick="showFinalDone()">OK</button>
@@ -575,7 +594,6 @@
             <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
         </div>
 
-        <!-- Shown when a word is fully done -->
         <div class="word-completed-banner" id="word-completed-banner">
             <strong>✓ Word Complete!</strong>
             <span>All 10 attempts saved for this word.</span>
@@ -583,7 +601,10 @@
 
         <div class="word-card">
             <div class="word-number" id="word-number">WORD 1 / 12</div>
-            <div class="word-nepali" id="word-nepali">—</div>
+            <div class="word-say-label">👆 Say this word</div>
+            <div class="word-highlight-wrap">
+                <div class="word-nepali" id="word-nepali">—</div>
+            </div>
             <div class="word-romanized" id="word-romanized">—</div>
             <div class="word-meaning" id="word-meaning">—</div>
             <div class="attempts-row" id="attempts-row"></div>
@@ -605,7 +626,7 @@
         </div>
     </div>
 
-    <!-- DONE (final thank you) -->
+    <!-- DONE -->
     <div id="done-screen" class="screen">
         <div class="done-icon">✓</div>
         <div class="done-title">धन्यवाद!</div>
@@ -614,7 +635,6 @@
         <button class="done-ok-btn" onclick="handleDoneOK()">OK</button>
     </div>
 
-    <!-- HIDDEN AUDIO PLAYER for iOS compatibility -->
     <audio id="audio-player" style="display:none"></audio>
 
     <!-- MIC DENIED MODAL -->
@@ -622,22 +642,10 @@
         <div class="mic-denied-card">
             <h2>🎙️ Microphone access needed</h2>
             <p class="sub">Your browser has blocked the microphone for this site. Here's how to fix it:</p>
-            <div class="mic-step">
-                <div class="mic-step-num">1</div>
-                <div>Tap the <strong>🔒 lock icon</strong> in your browser's address bar</div>
-            </div>
-            <div class="mic-step">
-                <div class="mic-step-num">2</div>
-                <div>Tap <strong>Permissions</strong> or <strong>Site settings</strong></div>
-            </div>
-            <div class="mic-step">
-                <div class="mic-step-num">3</div>
-                <div>Find <strong>Microphone</strong> and set it to <strong>Allow</strong></div>
-            </div>
-            <div class="mic-step">
-                <div class="mic-step-num">4</div>
-                <div>Come back and <strong>refresh the page</strong></div>
-            </div>
+            <div class="mic-step"><div class="mic-step-num">1</div><div>Tap the <strong>🔒 lock icon</strong> in your browser's address bar</div></div>
+            <div class="mic-step"><div class="mic-step-num">2</div><div>Tap <strong>Permissions</strong> or <strong>Site settings</strong></div></div>
+            <div class="mic-step"><div class="mic-step-num">3</div><div>Find <strong>Microphone</strong> and set it to <strong>Allow</strong></div></div>
+            <div class="mic-step"><div class="mic-step-num">4</div><div>Come back and <strong>refresh the page</strong></div></div>
             <button class="mic-denied-btn" onclick="document.getElementById('mic-denied-modal').classList.remove('show')">Got it</button>
         </div>
     </div>
@@ -661,14 +669,13 @@
     import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    /* ─── CONSTANTS ─── */
     const keywords = [
         { nepali: "बाल्नु",    romanized: "baalnu",    meaning: "Turn On" },
         { nepali: "बन्द",      romanized: "banda",     meaning: "Turn Off" },
         { nepali: "सुरु",      romanized: "suru",      meaning: "Start" },
         { nepali: "रोक्नु",    romanized: "roknu",     meaning: "Stop / Pause" },
         { nepali: "माथि",      romanized: "maathi",    meaning: "Up" },
-        { nepali: "तल",       romanized: "tala",      meaning: "Down" },
+        { nepali: "तल",        romanized: "tala",      meaning: "Down" },
         { nepali: "अर्को",     romanized: "arko",      meaning: "Next" },
         { nepali: "अघिल्लो",   romanized: "aghillo",   meaning: "Previous" },
         { nepali: "फेरि",      romanized: "feri",      meaning: "Repeat" },
@@ -677,26 +684,20 @@
         { nepali: "होइन",      romanized: "hoina",     meaning: "No" },
     ];
     const MAX_ATTEMPTS = 10;
-    const MIN_RECORD_MS = 700; // minimum 0.7 seconds for a valid clip
+    const MIN_RECORD_MS = 700;
 
-    /* ─── STATE ─── */
     let currentUser   = null;
     let db, auth, provider;
     let CLOUDINARY_CLOUD = '';
     let CLOUDINARY_PRESET = '';
-
-    // wordProgress: { romanized: attemptCount }  e.g. { banda: 4, gai: 10 }
     let wordProgress  = {};
-
-    // Recorder state
-    let activeWordIdx   = 0;   // which word is open in recorder
-    let currentAttempt  = 0;   // local; derived from wordProgress on open
+    let activeWordIdx   = 0;
+    let currentAttempt  = 0;
     let mediaRecorder   = null;
     let audioChunks     = [];
     let lastBlob        = null;
     let lastAudioURL    = null;
     let isRecording     = false;
-    // currentAudio is now the DOM element #audio-player (iOS compatible)
     let recordStartTime = 0;
 
     /* ─── INIT ─── */
@@ -723,7 +724,6 @@
                     await loadProgress(user);
                     showScreen('welcome');
                     document.getElementById('welcome-name').textContent = user.displayName || user.email;
-
                 } else {
                     currentUser = null;
                     wordProgress = {};
@@ -738,7 +738,7 @@
 
     init();
 
-    /* ─── IN-APP BROWSER DETECTION ─── */
+    /* ─── IN-APP BROWSER DETECTION (fixed — no longer blocks Firefox/Brave) ─── */
     function isInAppBrowser() {
         const ua = navigator.userAgent || '';
         return (
@@ -748,8 +748,8 @@
             ua.includes('Instagram') ||  // Instagram
             ua.includes('Messenger') ||  // Messenger
             ua.includes('FB_IAB') ||     // Facebook in-app
-            ua.includes('FB4A') ||       // Facebook Android
-            (ua.includes('iPhone') && ua.includes('AppleWebKit') && !ua.includes('Safari')) // iOS in-app generic
+            ua.includes('FB4A')          // Facebook Android
+            // removed generic iOS check — was blocking Firefox, Brave, DuckDuckGo on iPhone
         );
     }
 
@@ -758,12 +758,9 @@
         const ua = navigator.userAgent || '';
 
         if (/android/i.test(ua)) {
-            // Android: fire intent immediately — triggers Messenger's native "You're leaving our app" popup
-            // If Chrome not installed falls back to any browser
             window.location.href = url.replace(/^https:\/\//, 'intent://') +
                 '#Intent;scheme=https;action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
         } else {
-            // iOS: show our screen (iOS blocks auto-redirect from IAB)
             document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
             const iab = document.getElementById('iab-screen');
             iab.style.display = '';
@@ -775,19 +772,14 @@
     window.openInBrowser = () => {
         const url = window.location.href;
         const ua = navigator.userAgent || '';
-
-        // Android: use intent:// to force open in default browser
         if (/android/i.test(ua)) {
             const intentUrl = url.replace('https://', 'intent://').replace('http://', 'intent://') +
                 '#Intent;scheme=https;action=android.intent.action.VIEW;end';
             window.location.href = intentUrl;
             return;
         }
-
-        // iOS: try opening with window.open which sometimes escapes IAB
         const newWin = window.open(url, '_blank');
         if (!newWin || newWin.closed) {
-            // Blocked — fall back to copy
             window.copyLink();
             showToast("Tap ⋯ menu → Open in browser");
         }
@@ -827,45 +819,29 @@
         document.getElementById('user-pill').style.display = 'flex';
     }
 
-    /* ─── PROGRESS (per-word) ─── */
+    /* ─── PROGRESS ─── */
     async function loadProgress(user) {
         try {
             const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'words'));
             wordProgress = snap.exists() ? (snap.data() || {}) : {};
-        } catch(e) {
-            wordProgress = {};
-        }
+        } catch(e) { wordProgress = {}; }
     }
 
     async function saveWordProgress(romanized, count) {
         if (!currentUser) return;
         try {
             wordProgress[romanized] = count;
-            await setDoc(
-                doc(db, 'users', currentUser.uid, 'progress', 'words'),
-                wordProgress,
-                { merge: true }
-            );
+            await setDoc(doc(db, 'users', currentUser.uid, 'progress', 'words'), wordProgress, { merge: true });
         } catch(e) { showToast("Save failed: " + e.message); }
     }
 
-    /* ─── HELPERS ─── */
-    function totalClips() {
-        return Object.values(wordProgress).reduce((s, v) => s + v, 0);
-    }
-    function completedWords() {
-        return keywords.filter(kw => (wordProgress[kw.romanized] || 0) >= MAX_ATTEMPTS).length;
-    }
-    function allDone() {
-        return completedWords() >= keywords.length;
-    }
+    function totalClips() { return Object.values(wordProgress).reduce((s, v) => s + v, 0); }
+    function completedWords() { return keywords.filter(kw => (wordProgress[kw.romanized] || 0) >= MAX_ATTEMPTS).length; }
+    function allDone() { return completedWords() >= keywords.length; }
 
     /* ─── SCREENS ─── */
     function showScreen(name) {
-        document.querySelectorAll('.screen').forEach(s => {
-            s.classList.remove('active');
-            s.style.display = 'none';
-        });
+        document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
         const target = document.getElementById(name + '-screen');
         target.style.display = '';
         target.classList.add('active');
@@ -875,25 +851,20 @@
     window.requestMicThenStart = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            stream.getTracks().forEach(t => t.stop()); // permission granted, stop stream
+            stream.getTracks().forEach(t => t.stop());
             goToStage();
         } catch(e) {
             document.getElementById('mic-denied-modal').classList.add('show');
         }
     };
 
-    window.goToStage = () => {
-        renderStage();
-        showScreen('stage');
-    };
+    window.goToStage = () => { renderStage(); showScreen('stage'); };
 
     window.signInWithGoogle = async () => {
         try {
-            // Try popup first (works on most browsers)
             await signInWithPopup(auth, provider);
         } catch(e) {
             if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
-                // Fallback to redirect if popup blocked
                 try { await signInWithRedirect(auth, provider); }
                 catch(e2) { showToast("Sign in failed: " + e2.message); }
             } else {
@@ -911,17 +882,12 @@
         wordProgress = {};
     };
 
-    window.handleDoneOK = () => {
-        // Return to stage so they can see their completion, or restart
-        renderStage();
-        showScreen('stage');
-    };
+    window.handleDoneOK = () => { renderStage(); showScreen('stage'); };
 
-    /* ─── STAGE RENDER ─── */
+    /* ─── STAGE ─── */
     function renderStage() {
-        const grid = document.getElementById('word-grid');
+        const grid  = document.getElementById('word-grid');
         grid.innerHTML = '';
-
         const done  = completedWords();
         const clips = totalClips();
         const pct   = Math.round((clips / (keywords.length * MAX_ATTEMPTS)) * 100);
@@ -930,13 +896,7 @@
         document.getElementById('overall-bar').style.width = pct + '%';
         document.getElementById('overall-bar-label').textContent = `${clips} / ${keywords.length * MAX_ATTEMPTS} clips recorded`;
 
-        // Show all-done banner
-        const allDoneBanner = document.getElementById('stage-all-done');
-        if (allDone()) {
-            allDoneBanner.style.display = 'block';
-        } else {
-            allDoneBanner.style.display = 'none';
-        }
+        document.getElementById('stage-all-done').style.display = allDone() ? 'block' : 'none';
 
         keywords.forEach((kw, idx) => {
             const count     = wordProgress[kw.romanized] || 0;
@@ -946,7 +906,6 @@
 
             const tile = document.createElement('div');
             tile.className = 'word-tile' + (isDone ? ' completed' : isPartial ? ' in-progress' : '');
-
             tile.innerHTML = `
                 <div class="tile-nepali">${kw.nepali}</div>
                 <div class="tile-roman">${kw.romanized}</div>
@@ -956,72 +915,52 @@
                 </div>
                 <div class="tile-progress-label">${count} / ${MAX_ATTEMPTS}</div>
             `;
-
-            if (!isDone) {
-                tile.onclick = () => openRecorder(idx);
-            }
-
+            if (!isDone) tile.onclick = () => openRecorder(idx);
             grid.appendChild(tile);
         });
     }
 
-    /* ─── OPEN RECORDER FOR A WORD ─── */
+    /* ─── RECORDER ─── */
     window.openRecorder = async (wordIdx) => {
         activeWordIdx  = wordIdx;
         currentAttempt = Math.min(wordProgress[keywords[wordIdx].romanized] || 0, MAX_ATTEMPTS);
         resetRecorderUI();
         showScreen('recorder');
-        // Proactively check mic permission
         if (navigator.permissions) {
             try {
                 const status = await navigator.permissions.query({ name: 'microphone' });
-                if (status.state === 'denied') {
-                    document.getElementById('mic-denied-modal').classList.add('show');
-                }
-            } catch(e) { /* permissions API not supported, ignore */ }
+                if (status.state === 'denied') document.getElementById('mic-denied-modal').classList.add('show');
+            } catch(e) {}
         }
     };
 
     function resetRecorderUI() {
-        const kw      = keywords[activeWordIdx];
-        const isDone  = currentAttempt >= MAX_ATTEMPTS;
-        const wordNum = activeWordIdx + 1;
-
+        const kw     = keywords[activeWordIdx];
+        const isDone = currentAttempt >= MAX_ATTEMPTS;
         document.getElementById('progress-text').textContent = `Attempt ${Math.min(currentAttempt + 1, MAX_ATTEMPTS)} of ${MAX_ATTEMPTS}`;
         document.getElementById('progress-fill').style.width = Math.round((currentAttempt / MAX_ATTEMPTS) * 100) + '%';
-        document.getElementById('word-number').textContent    = `WORD ${wordNum} / ${keywords.length}`;
+        document.getElementById('word-number').textContent    = `WORD ${activeWordIdx + 1} / ${keywords.length}`;
         document.getElementById('word-nepali').textContent    = kw.nepali;
         document.getElementById('word-romanized').textContent = kw.romanized;
         document.getElementById('word-meaning').textContent   = `"${kw.meaning}"`;
-        document.getElementById('attempts-label').textContent = isDone
-            ? `10 / 10 — Complete! ✓`
-            : `Attempt ${currentAttempt + 1} of ${MAX_ATTEMPTS}`;
+        document.getElementById('attempts-label').textContent = isDone ? `10 / 10 — Complete! ✓` : `Attempt ${currentAttempt + 1} of ${MAX_ATTEMPTS}`;
 
-        // Dots
         const row = document.getElementById('attempts-row');
         row.innerHTML = '';
         for (let i = 0; i < MAX_ATTEMPTS; i++) {
             const d = document.createElement('div');
-            d.className = 'attempt-dot'
-                + (i < currentAttempt ? ' done' : i === currentAttempt && !isDone ? ' active' : '');
+            d.className = 'attempt-dot' + (i < currentAttempt ? ' done' : i === currentAttempt && !isDone ? ' active' : '');
             row.appendChild(d);
         }
 
-        // Completed banner
-        const banner = document.getElementById('word-completed-banner');
-        banner.classList.toggle('show', isDone);
-
-        // Record button — disable if done
+        document.getElementById('word-completed-banner').classList.toggle('show', isDone);
         const recordBtn = document.getElementById('record-btn');
         recordBtn.disabled = isDone;
-
-        // Reset recording state
         document.getElementById("audio-player").pause();
-        lastBlob = null;
-        lastAudioURL = null;
-        document.getElementById('record-btn').className = 'record-btn idle';
-        document.getElementById('record-btn').textContent = '🎙';
-        document.getElementById('record-hint').textContent = isDone ? 'সब प्रयास पूरा भए' : 'थिच्नुहोस् र बोल्नुहोस्';
+        lastBlob = null; lastAudioURL = null;
+        document.getElementById('record-btn').className    = 'record-btn idle';
+        document.getElementById('record-btn').textContent  = '🎙';
+        document.getElementById('record-hint').textContent = isDone ? 'सब प्रयास पूरा भए' : 'थिच्नुहोस् र बोल्नुहोस्';
         document.getElementById('playback-row').style.display = 'none';
         document.getElementById('save-btn').disabled = false;
         document.getElementById('upload-indicator').classList.remove('show');
@@ -1041,48 +980,36 @@
         showToast("Progress saved!");
     };
 
-    /* ─── RECORDING ─── */
     window.toggleRecord = async () => { isRecording ? stopRecording() : await startMic(); };
 
     async function startMic() {
         if (currentAttempt >= MAX_ATTEMPTS) { showToast("This word is complete!"); return; }
         try {
             document.getElementById("audio-player").pause();
-            // More permissive audio constraints for mobile browsers
             const stream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    sampleRate: 44100
-                }
+                audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 }
             }).catch(async () => {
-                // Fallback: try with minimal constraints if above fails
                 return await navigator.mediaDevices.getUserMedia({ audio: true });
             });
-            audioChunks  = [];
-            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 
-                             MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+            audioChunks = [];
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' :
+                             MediaRecorder.isTypeSupported('audio/mp4')  ? 'audio/mp4'  : '';
             mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
                 const duration = Date.now() - recordStartTime;
                 stream.getTracks().forEach(t => t.stop());
-                document.getElementById('record-btn').className    = 'record-btn idle';
-                document.getElementById('record-btn').textContent  = '🎙';
+                document.getElementById('record-btn').className   = 'record-btn idle';
+                document.getElementById('record-btn').textContent = '🎙';
                 isRecording = false;
-
                 if (duration < MIN_RECORD_MS) {
-                    // Too short — discard and prompt retry
-                    lastBlob = null;
-                    lastAudioURL = null;
+                    lastBlob = null; lastAudioURL = null;
                     document.getElementById('playback-row').style.display = 'none';
                     document.getElementById('record-hint').textContent = "Didn't catch that clearly — say it again!";
                     return;
                 }
-
-                // Safari/iOS needs mp4, other browsers use webm
-                const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-                lastBlob     = new Blob(audioChunks, { type: mimeType });
+                const mime = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+                lastBlob     = new Blob(audioChunks, { type: mime });
                 lastAudioURL = URL.createObjectURL(lastBlob);
                 document.getElementById('record-hint').textContent = 'सुन्नुहोस् वा सेभ गर्नुहोस्।';
                 document.getElementById('playback-row').style.display = 'flex';
@@ -1093,7 +1020,6 @@
             document.getElementById('record-btn').className   = 'record-btn recording';
             document.getElementById('record-btn').textContent = '⏹';
             document.getElementById('playback-row').style.display = 'none';
-
             document.getElementById('record-hint').textContent = 'रेकर्ड भइरहेको छ…';
         } catch(e) {
             if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
@@ -1113,10 +1039,8 @@
     window.playBack = () => {
         if (!lastAudioURL) { showToast("No recording to play"); return; }
         const player = document.getElementById("audio-player");
-        player.pause();
-        player.currentTime = 0;
-        player.src = lastAudioURL;
-        player.load();
+        player.pause(); player.currentTime = 0;
+        player.src = lastAudioURL; player.load();
         player.play().catch(e => showToast("Playback failed: " + e.message));
     };
 
@@ -1136,14 +1060,14 @@
         saveBtn.disabled = true;
         document.getElementById('upload-indicator').classList.add('show');
 
-        const kw       = keywords[activeWordIdx];
-        const speaker  = currentUser.uid + '_' + (currentUser.displayName || currentUser.email).replace(/\s+/g, '_');
-        const keyword  = kw.romanized;
+        const kw         = keywords[activeWordIdx];
+        const speaker    = currentUser.uid + '_' + (currentUser.displayName || currentUser.email).replace(/\s+/g, '_');
+        const keyword    = kw.romanized;
         const attemptNum = currentAttempt + 1;
-        const filename = `${speaker}_${keyword}_attempt_${String(attemptNum).padStart(2, '0')}`;
+        const filename   = `${speaker}_${keyword}_attempt_${String(attemptNum).padStart(2, '0')}`;
+        const ext        = lastBlob.type.includes('mp4') ? 'mp4' : 'webm';
 
         const formData = new FormData();
-        const ext = lastBlob.type.includes('mp4') ? 'mp4' : 'webm';
         formData.append('file', lastBlob, filename + '.' + ext);
         formData.append('upload_preset', CLOUDINARY_PRESET);
         formData.append('folder', `recordings/${speaker}/${keyword}`);
@@ -1152,25 +1076,19 @@
         try {
             const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, { method: 'POST', body: formData });
             const data = await res.json();
-
             if (data.secure_url) {
                 currentAttempt++;
                 await saveWordProgress(keyword, currentAttempt);
                 showToast("✓ Saved!");
-
+                document.getElementById('upload-indicator').classList.remove('show');
                 if (currentAttempt >= MAX_ATTEMPTS) {
-                    // Word done — update UI, check if all done
-                    resetRecorderUI();  // shows completed banner
-                    document.getElementById('upload-indicator').classList.remove('show');
-
+                    resetRecorderUI();
                     if (allDone()) {
                         await markAllComplete();
-                        // Show done screen after brief delay
                         setTimeout(() => showFinalDone(), 800);
                     }
                 } else {
                     resetRecorderUI();
-                    document.getElementById('upload-indicator').classList.remove('show');
                 }
             } else {
                 throw new Error(data.error?.message || 'Upload failed');
@@ -1182,14 +1100,10 @@
         }
     };
 
-    /* ─── DONE ─── */
     async function markAllComplete() {
         if (!currentUser) return;
         try {
-            await setDoc(doc(db, 'users', currentUser.uid), {
-                completedAt: new Date(),
-                totalClips: totalClips()
-            }, { merge: true });
+            await setDoc(doc(db, 'users', currentUser.uid), { completedAt: new Date(), totalClips: totalClips() }, { merge: true });
         } catch(e) { console.error(e); }
     }
 
@@ -1203,15 +1117,11 @@
         showScreen('done');
     };
 
-    /* ─── TOAST ─── */
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
+        t.textContent = msg; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2500);
     }
-
-    // Expose to window
     window.showToast = showToast;
 </script>
 </body>
