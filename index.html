@@ -121,6 +121,18 @@
         .welcome-banner .greeting { font-size: 13px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
         .welcome-banner .speaker-name { font-size: 26px; font-weight: 600; margin-bottom: 12px; }
         .welcome-banner .instructions { font-size: 13px; line-height: 1.7; opacity: 0.85; }
+        .welcome-about { display: grid; grid-template-columns: 1fr 2px 1fr; gap: 14px; margin-top: 4px; }
+        .welcome-about-ne { font-size: 12px; line-height: 1.7; opacity: 0.88; font-family: "Tiro Devanagari Nepali", serif; }
+        .welcome-about-en { font-size: 12px; line-height: 1.7; opacity: 0.88; }
+        .welcome-about-divider { background: rgba(255,255,255,0.25); border-radius: 99px; }
+
+        .two-col-instructions { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 16px; }
+        .instruction-col { display: flex; flex-direction: column; gap: 0; }
+        .instruction-divider { background: var(--cream-dark); }
+        .col-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); margin-bottom: 12px; font-family: "DM Mono", monospace; }
+        .two-col-instructions .tip-row { margin-bottom: 10px; }
+        .two-col-instructions .tip-icon { font-size: 14px; min-width: 20px; }
+        .two-col-instructions .tip-text { font-size: 11.5px; }
 
         .instructions-card {
             background: var(--white); border-radius: 20px; padding: 20px 20px 16px;
@@ -481,52 +493,48 @@
         <div class="welcome-banner">
             <div class="greeting">स्वागत छ / Welcome</div>
             <div class="speaker-name" id="welcome-name">—</div>
-            <div class="instructions">
-                तपाईंको आवाज NepSpot AI को लागि महत्त्वपूर्ण छ। धन्यवाद!<br/>
-                Your voice helps build Nepali AI. Thank you for contributing!
+            <div class="welcome-about">
+                <div class="welcome-about-ne">यो वेबसाइट भविष्यको परियोजनाको लागि १२ नेपाली शब्दहरूको आवाज डेटासेट संकलन गर्न बनाइएको हो। तपाईंको आवाजले नेपाली भाषाको AI विकासमा सहयोग पुर्‍याउनेछ।</div>
+                <div class="welcome-about-divider"></div>
+                <div class="welcome-about-en">This website collects voice recordings of 12 Nepali words to build a speech dataset for a future AI project. Your voice directly helps develop Nepali language AI.</div>
             </div>
         </div>
 
-        <div class="instructions-card">
-            <div class="card-title">📋 How it works</div>
-            <div class="tip-row">
-                <div class="tip-icon">🏠</div>
-                <div class="tip-text"><strong>Find a quiet spot.</strong> A room with no background noise or music is best. Don't record near a fan or open window.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">🎙️</div>
-                <div class="tip-text"><strong>Hold your phone normally</strong> — about 15–20 cm from your mouth. Don't cover the mic or hold it too close.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">🗣️</div>
-                <div class="tip-text"><strong>Speak clearly and naturally.</strong> Say each word the way you'd normally say it — not too slow, not robotic. Vary your pace slightly across attempts.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">⏱️</div>
-                <div class="tip-text"><strong>Wait 1 second</strong> before and after speaking. Press record → pause → say the word → pause → stop.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">🔇</div>
-                <div class="tip-text"><strong>Don't shout.</strong> Normal talking volume is perfect. Shouting distorts the audio.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">☕</div>
-                <div class="tip-text"><strong>Tired? Take a break anytime.</strong> Your progress auto-saves. Come back and pick up any word you haven't finished.</div>
-            </div>
-            <div class="tip-row">
-                <div class="tip-icon">🔁</div>
-                <div class="tip-text"><strong>Not happy with a recording?</strong> Hit ↺ to retake before saving.</div>
-            </div>
-        </div>
+        <button class="start-btn" onclick="requestMicThenStart()">सुरु गर्नुहोस् →</button>
 
-        <div class="info-grid">
+        <div class="info-grid" style="margin-top:16px">
             <div class="info-box"><div class="label">Words</div><div class="value">12</div><div class="value-sub">Nepali</div></div>
             <div class="info-box"><div class="label">Repeat</div><div class="value">10×</div><div class="value-sub">per word</div></div>
             <div class="info-box"><div class="label">Total</div><div class="value">120</div><div class="value-sub">clips</div></div>
             <div class="info-box"><div class="label">Time</div><div class="value">~15</div><div class="value-sub">मिनेट</div></div>
         </div>
 
-        <button class="start-btn" onclick="requestMicThenStart()">सुरु गर्नुहोस् →</button>
+        <div class="instructions-card">
+            <div class="card-title">📋 निर्देशनहरू / Instructions</div>
+            <div class="two-col-instructions">
+                <div class="instruction-col">
+                    <div class="col-header">नेपाली</div>
+                    <div class="tip-row"><div class="tip-icon">🏠</div><div class="tip-text"><strong>शान्त ठाउँ खोज्नुहोस्।</strong> पृष्ठभूमिमा आवाज वा संगीत नभएको कोठा सबैभन्दा राम्रो।</div></div>
+                    <div class="tip-row"><div class="tip-icon">🎙️</div><div class="tip-text"><strong>फोन सामान्य रूपमा समात्नुहोस्</strong> — मुखबाट १५–२० सेमी टाढा।</div></div>
+                    <div class="tip-row"><div class="tip-icon">🗣️</div><div class="tip-text"><strong>स्पष्ट र स्वाभाविक रूपमा बोल्नुहोस्।</strong> सामान्य गतिमा बोल्नुहोस् — धेरै ढिलो वा रोबोटिक नबोल्नुहोस्।</div></div>
+                    <div class="tip-row"><div class="tip-icon">⏱️</div><div class="tip-text"><strong>बोल्नु अगाडि र पछाडि १ सेकेन्ड</strong> पर्खनुहोस्।</div></div>
+                    <div class="tip-row"><div class="tip-icon">🔇</div><div class="tip-text"><strong>कराउनु नहोस्।</strong> सामान्य आवाज नै उत्तम छ।</div></div>
+                    <div class="tip-row"><div class="tip-icon">☕</div><div class="tip-text"><strong>थकित हुनुभयो?</strong> जुनसुकै बेला विश्राम लिनुहोस्। प्रगति स्वतः सुरक्षित हुन्छ।</div></div>
+                    <div class="tip-row"><div class="tip-icon">🔁</div><div class="tip-text"><strong>रेकर्डिङ मन परेन?</strong> सेभ गर्नु अगाडि ↺ थिचेर फेरि गर्नुहोस्।</div></div>
+                </div>
+                <div class="instruction-divider"></div>
+                <div class="instruction-col">
+                    <div class="col-header">English</div>
+                    <div class="tip-row"><div class="tip-icon">🏠</div><div class="tip-text"><strong>Find a quiet spot.</strong> A room with no background noise or music is best.</div></div>
+                    <div class="tip-row"><div class="tip-icon">🎙️</div><div class="tip-text"><strong>Hold your phone normally</strong> — about 15–20 cm from your mouth.</div></div>
+                    <div class="tip-row"><div class="tip-icon">🗣️</div><div class="tip-text"><strong>Speak clearly and naturally.</strong> Normal pace, not too slow or robotic.</div></div>
+                    <div class="tip-row"><div class="tip-icon">⏱️</div><div class="tip-text"><strong>Wait 1 second</strong> before and after speaking.</div></div>
+                    <div class="tip-row"><div class="tip-icon">🔇</div><div class="tip-text"><strong>Don't shout.</strong> Normal talking volume is perfect.</div></div>
+                    <div class="tip-row"><div class="tip-icon">☕</div><div class="tip-text"><strong>Tired? Take a break anytime.</strong> Progress auto-saves.</div></div>
+                    <div class="tip-row"><div class="tip-icon">🔁</div><div class="tip-text"><strong>Not happy with a recording?</strong> Hit ↺ to retake before saving.</div></div>
+                </div>
+            </div>
+        </div>
 
         <div class="footer-text">
             Thanks for the help guys :)<br>
