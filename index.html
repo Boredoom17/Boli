@@ -294,7 +294,6 @@
         .word-romanized { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--gold); margin-bottom: 4px; letter-spacing: 1px; }
         .word-meaning { font-size: 13px; color: var(--ink-soft); margin-bottom: 24px; }
 
-        /* ── WORD HIGHLIGHT ── */
         .word-highlight-wrap {
             background: rgba(139,26,26,0.07);
             border: 2px solid var(--red);
@@ -683,6 +682,7 @@
         { nepali: "हुन्छ",     romanized: "huncha",    meaning: "Yes" },
         { nepali: "होइन",      romanized: "hoina",     meaning: "No" },
     ];
+
     const MAX_ATTEMPTS = 10;
     const MIN_RECORD_MS = 700;
 
@@ -700,7 +700,6 @@
     let isRecording     = false;
     let recordStartTime = 0;
 
-    /* ─── INIT ─── */
     async function init() {
         showScreen('loading');
         try {
@@ -738,25 +737,18 @@
 
     init();
 
-    /* ─── IN-APP BROWSER DETECTION (fixed — no longer blocks Firefox/Brave) ─── */
     function isInAppBrowser() {
         const ua = navigator.userAgent || '';
         return (
-            ua.includes('FBAN') ||       // Facebook
-            ua.includes('FBAV') ||       // Facebook
-            ua.includes('FBIOS') ||      // Facebook iOS
-            ua.includes('Instagram') ||  // Instagram
-            ua.includes('Messenger') ||  // Messenger
-            ua.includes('FB_IAB') ||     // Facebook in-app
-            ua.includes('FB4A')          // Facebook Android
-            // removed generic iOS check — was blocking Firefox, Brave, DuckDuckGo on iPhone
+            ua.includes('FBAN') || ua.includes('FBAV') || ua.includes('FBIOS') ||
+            ua.includes('Instagram') || ua.includes('Messenger') ||
+            ua.includes('FB_IAB') || ua.includes('FB4A')
         );
     }
 
     if (isInAppBrowser()) {
         const url = window.location.href;
         const ua = navigator.userAgent || '';
-
         if (/android/i.test(ua)) {
             window.location.href = url.replace(/^https:\/\//, 'intent://') +
                 '#Intent;scheme=https;action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
@@ -787,14 +779,9 @@
 
     window.copyLink = () => {
         const url = window.location.href;
-        navigator.clipboard.writeText(url).then(() => {
-            showToast('Link copied! Paste it in Chrome or Safari');
-        }).catch(() => {
-            showToast('Copy this link: ' + url);
-        });
+        navigator.clipboard.writeText(url).then(() => showToast('Link copied! Paste it in Chrome or Safari')).catch(() => showToast('Copy this link: ' + url));
     };
 
-    /* ─── USER PROFILE ─── */
     async function saveUserProfile(user) {
         try {
             const ref  = doc(db, 'users', user.uid);
@@ -819,7 +806,6 @@
         document.getElementById('user-pill').style.display = 'flex';
     }
 
-    /* ─── PROGRESS ─── */
     async function loadProgress(user) {
         try {
             const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'words'));
@@ -839,7 +825,6 @@
     function completedWords() { return keywords.filter(kw => (wordProgress[kw.romanized] || 0) >= MAX_ATTEMPTS).length; }
     function allDone() { return completedWords() >= keywords.length; }
 
-    /* ─── SCREENS ─── */
     function showScreen(name) {
         document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
         const target = document.getElementById(name + '-screen');
@@ -847,7 +832,6 @@
         target.classList.add('active');
     }
 
-    /* ─── NAVIGATION ─── */
     window.requestMicThenStart = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -884,7 +868,6 @@
 
     window.handleDoneOK = () => { renderStage(); showScreen('stage'); };
 
-    /* ─── STAGE ─── */
     function renderStage() {
         const grid  = document.getElementById('word-grid');
         grid.innerHTML = '';
@@ -920,18 +903,11 @@
         });
     }
 
-    /* ─── RECORDER ─── */
     window.openRecorder = async (wordIdx) => {
         activeWordIdx  = wordIdx;
         currentAttempt = Math.min(wordProgress[keywords[wordIdx].romanized] || 0, MAX_ATTEMPTS);
         resetRecorderUI();
         showScreen('recorder');
-        if (navigator.permissions) {
-            try {
-                const status = await navigator.permissions.query({ name: 'microphone' });
-                if (status.state === 'denied') document.getElementById('mic-denied-modal').classList.add('show');
-            } catch(e) {}
-        }
     };
 
     function resetRecorderUI() {
@@ -988,12 +964,9 @@
             document.getElementById("audio-player").pause();
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 }
-            }).catch(async () => {
-                return await navigator.mediaDevices.getUserMedia({ audio: true });
-            });
+            }).catch(async () => await navigator.mediaDevices.getUserMedia({ audio: true }));
             audioChunks = [];
-            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' :
-                             MediaRecorder.isTypeSupported('audio/mp4')  ? 'audio/mp4'  : '';
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
             mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
@@ -1051,9 +1024,11 @@
         document.getElementById('record-hint').textContent = 'थिच्नुहोस् र बोल्नुहोस्';
     };
 
+    /* ==================== FIXED saveClip FUNCTION ==================== */
     window.saveClip = async () => {
         if (!lastBlob || !currentUser) return;
         if (currentAttempt >= MAX_ATTEMPTS) { showToast("Already at 10/10!"); return; }
+
         document.getElementById("audio-player").pause();
 
         const saveBtn = document.getElementById('save-btn');
@@ -1064,23 +1039,31 @@
         const speaker    = currentUser.uid + '_' + (currentUser.displayName || currentUser.email).replace(/\s+/g, '_');
         const keyword    = kw.romanized;
         const attemptNum = currentAttempt + 1;
-        const filename   = `${speaker}_${keyword}_attempt_${String(attemptNum).padStart(2, '0')}`;
-        const ext        = lastBlob.type.includes('mp4') ? 'mp4' : 'webm';
+
+        // Unique filename every time — this fixes the overwriting problem
+        const timestamp = Date.now();
+        const filename  = `${speaker}_${keyword}_attempt_${String(attemptNum).padStart(2, '0')}_${timestamp}`;
 
         const formData = new FormData();
-        formData.append('file', lastBlob, filename + '.' + ext);
+        formData.append('file', lastBlob, filename + '.webm');
         formData.append('upload_preset', CLOUDINARY_PRESET);
         formData.append('folder', `recordings/${speaker}/${keyword}`);
         formData.append('public_id', filename);
+        formData.append('resource_type', 'auto');
 
         try {
-            const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, { method: 'POST', body: formData });
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
+                method: 'POST',
+                body: formData
+            });
             const data = await res.json();
+
             if (data.secure_url) {
                 currentAttempt++;
                 await saveWordProgress(keyword, currentAttempt);
-                showToast("✓ Saved!");
+                showToast("✓ Saved to Cloudinary!");
                 document.getElementById('upload-indicator').classList.remove('show');
+
                 if (currentAttempt >= MAX_ATTEMPTS) {
                     resetRecorderUI();
                     if (allDone()) {
@@ -1094,10 +1077,11 @@
                 throw new Error(data.error?.message || 'Upload failed');
             }
         } catch(e) {
+            console.error('Upload error:', e);
             showToast("Upload failed: " + e.message);
             saveBtn.disabled = false;
-            document.getElementById('upload-indicator').classList.remove('show');
         }
+        document.getElementById('upload-indicator').classList.remove('show');
     };
 
     async function markAllComplete() {
