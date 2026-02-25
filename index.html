@@ -1061,7 +1061,7 @@
             if (data.secure_url) {
                 currentAttempt++;
                 await saveWordProgress(keyword, currentAttempt);
-                showToast("✓ Saved to Cloudinary!");
+                showToast("✓ Saved!");
                 document.getElementById('upload-indicator').classList.remove('show');
 
                 if (currentAttempt >= MAX_ATTEMPTS) {
