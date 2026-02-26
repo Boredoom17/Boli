@@ -50,8 +50,8 @@ Built as a single HTML file with pure JavaScript to make it fast, lightweight, a
 
 ![Welcome Screen](./screenshots/welcome.png)
 ![Stage Screen](./screenshots/stage.png)
+![Words](./screenshots/words.png)
 ![Recorder Screen](./screenshots/recorder.png)
-![In-App Browser Warning](./screenshots/iab-warning.png)
 
 ## 🚀 How to Use
 
@@ -86,6 +86,7 @@ Boli/ <br>
 
 
 </div>
+
 
 
 
