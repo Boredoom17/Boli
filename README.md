@@ -59,7 +59,7 @@ Built as a single HTML file with pure JavaScript to make it fast, lightweight, a
 
 ## 📁 Project Structure
 Boli/ <br>
-├── index.html          ← Main file (everything is here) <br>
+├── index.html      <space>     ← Main file (everything is here) <br>
 ├── README.md   <br>
 └── (Netlify + GitHub)  <br>  <br>
 
@@ -79,6 +79,7 @@ Boli/ <br>
 
 
 </div>
+
 
 
 
