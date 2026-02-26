@@ -13,7 +13,6 @@
 
 
 
-**Made for something important in the future**
 
 [🌐 Open Boli Now](https://aawaj.netlify.app)
 
@@ -55,7 +54,8 @@ Built as a single HTML file with pure JavaScript to make it fast, lightweight, a
 4. Start recording — follow the simple steps
 5. Your progress saves automatically
 
-**Tip**: If you open the link inside Instagram or Messenger, tap the **⋯ menu** and choose **"Open in Browser"** (Safari/Chrome) for the best experience.
+**Tip**: 
+**"Open in Browser"** (Safari/Chrome) for the best experience.
 
 ## 📁 Project Structure
 Boli/
@@ -77,9 +77,8 @@ Boli/
 
 **Made for something important in the future**
 
-[🎙️ Start Recording](https://aawaj.netlify.app)  
-[⭐ Star on GitHub](https://github.com/Boredoom17/Boli)
 
 </div>
+
 
 
