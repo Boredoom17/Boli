@@ -74,9 +74,9 @@ Boli/ <br>
 
 ## 🙏 Acknowledgments
 
-- Thank you to everyone who contributed their voice
-- Special thanks to friends who tested and gave feedback
-- Built with ❤️ by **Aadarsha**
+Thank you to everyone who contributed their voice <br>
+Special thanks to friends who tested and gave feedback <br>
+Built with ❤️ by **Aadarsha** <br>
 
 ---
 
@@ -86,6 +86,7 @@ Boli/ <br>
 
 
 </div>
+
 
 
 
