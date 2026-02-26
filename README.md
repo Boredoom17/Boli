@@ -11,9 +11,7 @@
 [![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)](https://cloudinary.com/)
 [![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://netlify.com/)
 
-<p align="center">
-  <img src="https://via.placeholder.com/220x220/8B1A1A/FFFFFF?text=बोली" alt="Boli Logo" width="220"/>
-</p>
+
 
 **Made for something important in the future**
 
@@ -83,4 +81,5 @@ Boli/
 [⭐ Star on GitHub](https://github.com/Boredoom17/Boli)
 
 </div>
+
 
