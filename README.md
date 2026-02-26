@@ -58,10 +58,10 @@ Built as a single HTML file with pure JavaScript to make it fast, lightweight, a
 **"Open in Browser"** (Safari/Chrome) for the best experience.
 
 ## 📁 Project Structure
-Boli/
-├── index.html          ← Main file (everything is here)
-├── README.md
-└── (Netlify + GitHub)
+Boli/ <br>
+├── index.html          ← Main file (everything is here) <br>
+├── README.md   <br>
+└── (Netlify + GitHub)  <br>  <br>
 
 
 
@@ -79,6 +79,7 @@ Boli/
 
 
 </div>
+
 
 
 
