@@ -46,6 +46,13 @@ Built as a single HTML file with pure JavaScript to make it fast, lightweight, a
 - **Audio Storage**: Cloudinary
 - **Hosting**: Netlify (Static Hosting)
 
+### 📸 Screenshots
+
+![Welcome Screen](./screenshots/welcome.png)
+![Stage Screen](./screenshots/stage.png)
+![Recorder Screen](./screenshots/recorder.png)
+![In-App Browser Warning](./screenshots/iab-warning.png)
+
 ## 🚀 How to Use
 
 1. Open [https://aawaj.netlify.app](https://aawaj.netlify.app)
@@ -79,6 +86,7 @@ Boli/ <br>
 
 
 </div>
+
 
 
 
